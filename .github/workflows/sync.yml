@@ -1,0 +1,67 @@
+name: 同步飞书简报并部署网站
+
+on:
+  repository_dispatch:
+    types: [feishu_bitable_changed]
+  workflow_dispatch:
+  schedule:
+    # 每日中国时间 23:30（UTC 15:30）兜底全量同步。
+    - cron: '30 15 * * *'
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: feishu-bitable-sync-and-deploy
+  cancel-in-progress: false
+
+jobs:
+  sync-and-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: 读取仓库内容
+        uses: actions/checkout@v4
+
+      - name: 配置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: 从飞书多维表格同步数据
+        run: npm run sync
+        env:
+          FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
+          FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
+          FEISHU_APP_TOKEN: ${{ secrets.FEISHU_APP_TOKEN }}
+          FEISHU_TABLE_ID: ${{ secrets.FEISHU_TABLE_ID }}
+          FEISHU_TIME_ZONE: Asia/Shanghai
+
+      - name: 保存同步后的数据版本
+        run: |
+          if git diff --quiet -- public/data.json; then
+            echo "data.json 没有变化，无需创建提交。"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/data.json
+          git commit -m "chore: sync Feishu daily brief"
+          git push
+
+      - name: 配置 GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: 上传网页文件
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: 发布到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

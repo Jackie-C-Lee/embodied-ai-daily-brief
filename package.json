@@ -1,0 +1,12 @@
+{
+  "name": "embodied-ai-daily-brief",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node sync-feishu.mjs"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

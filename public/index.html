@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>每日具身智能简报 · Embodied AI Daily</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --primary: #4A1D7A;
+  --primary-2: #6B2BA8;
+  --primary-3: #9163C9;
+  --primary-soft: #F0E9FA;
+  --primary-dark: #2D0F4E;
+  --accent: #F5C518;
+  --accent-2: #FFD93D;
+  --accent-soft: #FFF4D1;
+  --bg: #FAF7FE;
+  --bg-card: #FFFFFF;
+  --text-1: #1F1235;
+  --text-2: #5B5570;
+  --text-3: #9B95AC;
+  --border: #EAE3F5;
+  --border-strong: #D4C5EA;
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+}
+* { box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: 'Noto Sans SC', 'Space Grotesk', system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text-1);
+  font-size: 15px;
+  line-height: 1.6;
+}
+.font-display { font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif; letter-spacing: -0.02em; }
+
+/* ============ Header ============ */
+.header {
+  position: sticky; top: 0; z-index: 50;
+  background: rgba(45, 15, 78, 0.92);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.header::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(245,197,24,0.5), transparent);
+}
+.logo-img {
+  width: 36px; height: 36px; object-fit: contain;
+  border-radius: 6px; background: rgba(255,255,255,0.1); padding: 3px;
+}
+.logo-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
+.search-box {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 999px; transition: all 0.2s;
+  max-width: 320px;
+}
+.search-box:focus-within {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(245, 197, 24, 0.5);
+  box-shadow: 0 0 0 3px rgba(245, 197, 24, 0.1);
+}
+.search-box input { background: transparent; border: none; outline: none; color: white; width: 100%; }
+.search-box input::placeholder { color: rgba(255,255,255,0.5); }
+.header-stat { text-align: right; flex-shrink: 0; }
+.header-stat-num { color: #FFD93D; font-weight: 700; font-size: 16px; font-family: 'Space Grotesk'; line-height: 1.2; }
+.header-stat-label { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+/* ============ Hero ============ */
+.hero {
+  background: linear-gradient(135deg, #2D0F4E 0%, #4A1D7A 45%, #5B2A8F 100%);
+  position: relative; overflow: hidden; color: white;
+}
+.hero-grid {
+  position: absolute; inset: 0;
+  background-image: 
+    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
+}
+.hero-grid-highlight {
+  position: absolute; inset: 0; pointer-events: none;
+  background-image: 
+    linear-gradient(rgba(245,197,24,0.15) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(245,197,24,0.15) 1px, transparent 1px);
+  background-size: 60px 60px;
+  -webkit-mask-image: radial-gradient(circle 200px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+  mask-image: radial-gradient(circle 200px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+  opacity: 0; transition: opacity 0.4s;
+}
+.hero:hover .hero-grid-highlight { opacity: 1; }
+.hero-glow-mouse {
+  position: absolute; width: 500px; height: 500px; pointer-events: none;
+  background: radial-gradient(circle, rgba(245,197,24,0.18), transparent 60%);
+  left: var(--mouse-x); top: var(--mouse-y);
+  transform: translate(-50%, -50%);
+  filter: blur(40px);
+  opacity: 0; transition: opacity 0.3s;
+}
+.hero:hover .hero-glow-mouse { opacity: 1; }
+.hero-glow { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(80px); }
+.hero-glow-1 { width: 500px; height: 500px; top: -200px; right: -100px; background: radial-gradient(circle, rgba(245,197,24,0.25), transparent 60%); }
+.hero-glow-2 { width: 600px; height: 600px; bottom: -300px; left: -150px; background: radial-gradient(circle, rgba(155,107,201,0.4), transparent 60%); }
+.hero-orbit { position: absolute; top: 50%; right: 6%; transform: translateY(-50%); width: 360px; height: 360px; pointer-events: none; opacity: 0.7; }
+.hero-orbit::before, .hero-orbit::after {
+  content: ''; position: absolute; inset: 0;
+  border: 1px dashed rgba(245, 197, 24, 0.25); border-radius: 50%;
+  animation: spin 30s linear infinite;
+}
+.hero-orbit::after { inset: 50px; border-color: rgba(255, 255, 255, 0.12); animation-duration: 40s; animation-direction: reverse; }
+.orbit-core {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: 56px; height: 56px;
+  background: linear-gradient(135deg, #F5C518, #FFD93D);
+  border-radius: 50%; box-shadow: 0 0 60px rgba(245,197,24,0.6);
+  animation: float 4s ease-in-out infinite;
+}
+.orbit-dot-1 { position: absolute; top: 0; left: 50%; transform: translateX(-50%); width: 14px; height: 14px; background: #9163C9; border-radius: 50%; box-shadow: 0 0 20px rgba(145,99,201,0.8); }
+.orbit-dot-2 { position: absolute; top: 50px; right: 30px; width: 10px; height: 10px; background: #F5C518; border-radius: 50%; box-shadow: 0 0 12px rgba(245,197,24,0.7); }
+.orbit-dot-3 { position: absolute; bottom: 80px; left: 40px; width: 8px; height: 8px; background: #FFD93D; border-radius: 50%; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+@keyframes float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 12px)); } }
+.hero-stat-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px; padding: 16px 20px; min-width: 140px;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.hero-stat-card:hover {
+  background: rgba(255, 255, 255, 0.14);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 40px rgba(245,197,24,0.15);
+  border-color: rgba(245,197,24,0.3);
+}
+.pulse-dot { width: 8px; height: 8px; background: #FFD93D; border-radius: 50%; position: relative; display: inline-block; }
+.pulse-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: #FFD93D; opacity: 0.4; animation: pulse 2s infinite; }
+@keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(2); opacity: 0; } }
+
+/* ============ Sidebar ============ */
+.sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+
+/* 时间轴：顶格最新日期 */
+.date-item-top {
+  display: flex; align-items: center; gap: 12px;
+  padding: 14px; border-radius: 12px; cursor: pointer;
+  background: var(--bg-card); color: var(--text-1);
+  border: 1px solid var(--border);
+  margin-bottom: 8px; transition: all 0.2s;
+  position: relative; overflow: hidden;
+}
+.date-item-top:hover { 
+  background: var(--primary-soft); 
+  border-color: var(--primary-3);
+}
+.date-item-top.active {
+  background: var(--primary); color: white;
+  border-color: var(--primary-2);
+  box-shadow: 0 4px 16px rgba(74, 29, 122, 0.25);
+}
+.date-item-top.active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 3px;
+  background: var(--accent);
+}
+.top-date-circle {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--primary-soft); color: var(--primary);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  flex-shrink: 0; font-family: 'Space Grotesk';
+  line-height: 1; transition: all 0.2s;
+}
+.date-item-top.active .top-date-circle {
+  background: var(--accent); color: var(--primary-dark);
+}
+.top-date-circle .weekday { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; }
+.top-date-circle .day-num { font-size: 16px; font-weight: 700; margin-top: 2px; }
+.date-item-top-info { flex: 1; }
+.date-item-top-date { font-size: 13px; font-weight: 600; }
+.date-item-top-weekday { font-size: 11px; opacity: 0.7; margin-top: 2px; }
+.date-item-top-count {
+  background: var(--primary-soft); color: var(--primary);
+  font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+  font-family: 'Space Grotesk'; transition: all 0.2s;
+}
+.date-item-top.active .date-item-top-count {
+  background: rgba(255,255,255,0.2); color: var(--accent-2);
+}
+
+/* 时间轴：普通日期项 */
+.date-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; border-radius: 10px; cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid transparent; margin-bottom: 4px;
+}
+.date-item:hover { background: var(--primary-soft); transform: translateX(2px); }
+.date-item.active {
+  background: var(--primary-soft);
+  border-color: var(--primary-3);
+  color: var(--primary);
+}
+.date-item.active .date-item-count { background: var(--primary); color: white; }
+.date-item-date { font-size: 13px; font-weight: 500; color: var(--text-2); font-family: 'Space Grotesk'; }
+.date-item.active .date-item-date { color: var(--primary); font-weight: 600; }
+.date-item-count { background: var(--primary-soft); color: var(--primary); font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; font-family: 'Space Grotesk'; }
+
+/* ============ 迷你日历 ============ */
+.calendar-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+.calendar-nav-btn {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s; border: none;
+  background: var(--primary-soft); color: var(--primary);
+}
+.calendar-nav-btn:hover:not(:disabled) { background: var(--primary); color: white; }
+.calendar-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.calendar-title { font-size: 13px; font-weight: 700; color: var(--text-1); font-family: 'Space Grotesk'; }
+.calendar-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+.calendar-weekday-header {
+  text-align: center; font-size: 10px; font-weight: 600;
+  color: var(--text-3); padding: 4px 0; font-family: 'Space Grotesk'; letter-spacing: 0.03em;
+}
+.calendar-day {
+  aspect-ratio: 1; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 500; border-radius: 6px;
+  position: relative; cursor: pointer; transition: all 0.15s;
+  font-family: 'Space Grotesk';
+}
+.calendar-day.has-data { background: var(--primary-soft); color: var(--primary); font-weight: 700; }
+.calendar-day.has-data:hover { background: var(--primary-3); color: white; }
+.calendar-day.has-data.selected { background: var(--primary); color: white; box-shadow: 0 0 0 2px var(--accent); }
+.calendar-day.no-data { color: var(--text-3); opacity: 0.35; cursor: not-allowed; pointer-events: none; }
+.calendar-day.empty { background: transparent; pointer-events: none; }
+.calendar-day .data-dot {
+  position: absolute; bottom: 3px; left: 50%; transform: translateX(-50%);
+  width: 4px; height: 4px; border-radius: 50%; background: var(--accent);
+}
+.calendar-day.selected .data-dot { background: white; }
+
+/* ============ 主题分布 ============ */
+.topic-bar-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+.topic-bar-row:hover { background: var(--primary-soft); }
+.topic-bar-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+.topic-bar-name { font-size: 12px; color: var(--text-2); flex: 1; }
+.topic-bar-count { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 600; color: var(--text-1); }
+
+/* ============ 快速入口 ============ */
+.quick-link {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px; border-radius: 10px; text-decoration: none;
+  transition: all 0.2s; border: 1px solid transparent;
+}
+.quick-link:hover { background: var(--primary-soft); border-color: var(--border); transform: translateX(2px); }
+.quick-link-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; overflow: hidden;
+}
+.quick-link-img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+.quick-link-text { font-size: 12px; font-weight: 600; color: var(--text-1); line-height: 1.3; }
+.quick-link-desc { font-size: 10px; color: var(--text-3); margin-top: 1px; }
+.qr-placeholder {
+  width: 100%; aspect-ratio: 1; max-width: 110px;
+  background: var(--bg); border: 1px dashed var(--border-strong);
+  border-radius: 10px; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; color: var(--text-3);
+  font-size: 10px; text-align: center; padding: 8px;
+}
+
+/* ============ 主题筛选 ============ */
+.topic-filter-btn {
+  padding: 6px 14px; border-radius: 999px; font-size: 13px; font-weight: 500;
+  background: white; border: 1px solid var(--border); color: var(--text-2);
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.topic-filter-btn:hover { border-color: var(--primary-3); color: var(--primary); }
+.topic-filter-btn.active { background: var(--primary); border-color: var(--primary); color: white; }
+.topic-filter-btn .dot { width: 8px; height: 8px; border-radius: 50%; }
+
+/* ============ 资讯卡片 ============ */
+.news-card {
+  background: var(--bg-card); border: 1px solid var(--border);
+  border-radius: 16px; padding: 24px 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative; overflow: hidden;
+}
+.news-card::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
+  background: var(--topic-color, var(--primary)); transition: width 0.3s;
+}
+.news-card:hover { border-color: var(--primary-3); box-shadow: 0 12px 32px -8px rgba(74, 29, 122, 0.15); transform: translateY(-2px); }
+.news-card:hover::before { width: 6px; }
+.news-card-topic { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.news-card-topic .dot { width: 6px; height: 6px; border-radius: 50%; }
+.news-card-title { font-size: 20px; font-weight: 700; line-height: 1.35; color: var(--text-1); margin: 12px 0 8px; letter-spacing: -0.01em; transition: color 0.2s; }
+.news-card:hover .news-card-title { color: var(--primary); }
+.news-card-summary {
+  color: var(--text-2); font-size: 14px; line-height: 1.75; margin-bottom: 16px;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.news-card.expanded .news-card-summary { -webkit-line-clamp: unset; }
+.news-card-toggle {
+  cursor: pointer; background: none; border: none; color: var(--primary);
+  font-size: 13px; font-weight: 600; padding: 0; margin-right: 16px;
+  display: inline-flex; align-items: center; gap: 4px; transition: color 0.2s; font-family: inherit;
+}
+.news-card-toggle:hover { color: var(--primary-2); }
+.news-card-toggle svg { transition: transform 0.3s; }
+.news-card.expanded .news-card-toggle svg { transform: rotate(180deg); }
+.news-card-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 16px; background: var(--accent); color: var(--primary-dark);
+  border-radius: 999px; font-size: 13px; font-weight: 600; text-decoration: none;
+  transition: all 0.2s;
+}
+.news-card-link:hover { background: var(--accent-2); transform: translateX(2px); box-shadow: 0 4px 12px rgba(245, 197, 24, 0.4); }
+.news-card-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); margin-top: 8px; }
+.news-card-date { font-family: 'Space Grotesk'; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+.fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
+.custom-scroll::-webkit-scrollbar { width: 6px; }
+.custom-scroll::-webkit-scrollbar-track { background: transparent; }
+.custom-scroll::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+.custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary-3); }
+.empty-state { text-align: center; padding: 80px 20px; color: var(--text-3); }
+.highlight { background: linear-gradient(180deg, transparent 60%, rgba(245, 197, 24, 0.45) 60%); padding: 0 2px; border-radius: 2px; }
+.counter { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
+
+@media (max-width: 1024px) { .hero-orbit { display: none; } }
+@media (max-width: 768px) {
+  .hero h1 { font-size: 28px !important; }
+  .news-card { padding: 18px; }
+  .news-card-title { font-size: 17px; }
+  .header-stat { display: none; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="header">
+  <div class="max-w-[1480px] mx-auto px-6 py-3 flex items-center gap-4">
+    <div class="flex items-center gap-3 flex-shrink-0">
+      <img src="" alt="AIRS" class="logo-img" id="logoAIRS" onerror="this.style.display='none'">
+      <div class="logo-divider"></div>
+      <img src="" alt="CUHK" class="logo-img" id="logoCUHK" onerror="this.style.display='none'">
+    </div>
+    
+    <div class="flex flex-col leading-tight flex-shrink-0">
+      <span class="text-white font-bold text-[15px] tracking-tight">每日具身智能简报</span>
+      <span class="text-purple-200/60 text-[10px] tracking-[0.15em] uppercase font-display">Embodied AI Daily</span>
+    </div>
+    
+    <div class="search-box flex items-center gap-2 px-4 py-2 ml-auto w-full">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <input type="text" id="searchInput" placeholder="搜索标题、主题、简介（多关键词用空格隔开）" class="text-sm">
+      <button id="clearSearch" class="hidden text-purple-200 hover:text-white" aria-label="清空搜索">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    
+    <div class="flex items-center gap-5 flex-shrink-0">
+      <div class="header-stat">
+        <div class="header-stat-num counter" id="totalCount">0</div>
+        <div class="header-stat-label">累计资讯</div>
+      </div>
+      <div class="w-px h-8 bg-white/15"></div>
+      <div class="header-stat">
+        <div class="header-stat-num counter" id="totalDays">0</div>
+        <div class="header-stat-label">整理天数</div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero py-16 md:py-20" id="heroSection">
+  <div class="hero-grid"></div>
+  <div class="hero-grid-highlight"></div>
+  <div class="hero-glow-mouse"></div>
+  <div class="hero-glow hero-glow-1"></div>
+  <div class="hero-glow hero-glow-2"></div>
+  <div class="hero-orbit hidden lg:block">
+    <div class="orbit-core"></div>
+    <div class="orbit-dot-1"></div>
+    <div class="orbit-dot-2"></div>
+    <div class="orbit-dot-3"></div>
+  </div>
+  
+  <div class="max-w-[1480px] mx-auto px-6 relative">
+    <div class="flex items-end justify-between flex-wrap gap-8">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full px-3 py-1 mb-5">
+          <span class="pulse-dot"></span>
+          <span class="text-yellow-200 text-[11px] font-medium tracking-[0.15em] uppercase font-display">Daily Brief · 每日更新</span>
+        </div>
+        <h1 class="text-4xl md:text-5xl font-black leading-[1.15] mb-4 font-display tracking-tight">
+          追踪具身智能前沿
+          <span class="block bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">每日精选行业洞察</span>
+        </h1>
+        <p class="text-purple-100/80 text-base md:text-lg leading-relaxed max-w-xl">
+          汇聚全球具身智能领域最新研究、产品、融资与政策动态，由团队人工筛选整理，每日发布。
+        </p>
+      </div>
+      
+      <div class="flex gap-3">
+        <div class="hero-stat-card">
+          <div class="text-purple-200/70 text-[10px] tracking-wider uppercase mb-1">今日精选</div>
+          <div class="text-yellow-300 text-3xl font-bold font-display counter" id="todayCount">0</div>
+          <div class="text-purple-100/60 text-xs mt-1">条资讯</div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="text-purple-200/70 text-[10px] tracking-wider uppercase mb-1">最新日期</div>
+          <div class="text-yellow-300 text-3xl font-bold font-display" id="todayDate">--</div>
+          <div class="text-purple-100/60 text-xs mt-1" id="todayWeekday">--</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Main -->
+<main class="max-w-[1480px] mx-auto px-6 py-10 relative">
+  <div class="grid grid-cols-12 gap-6">
+    <!-- Sidebar -->
+    <aside class="col-span-12 lg:col-span-3">
+      <div class="lg:sticky lg:top-24 space-y-4">
+        <!-- 时间轴 -->
+        <div class="sidebar-card">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <h3 class="font-bold text-sm flex items-center gap-2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--primary)]">
+                <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+              </svg>
+              历史简报
+            </h3>
+            <span class="text-[11px] text-[var(--text-3)] font-display" id="dateListCount">0 天</span>
+          </div>
+          <div id="dateList" class="pr-1"></div>
+        </div>
+        
+        <!-- 迷你日历 -->
+        <div class="sidebar-card">
+          <div class="calendar-header">
+            <button class="calendar-nav-btn" id="calPrev" aria-label="上一月">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m15 18-6-6 6-6"/></svg>
+            </button>
+            <span class="calendar-title" id="calTitle">--</span>
+            <button class="calendar-nav-btn" id="calNext" aria-label="下一月">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
+            </button>
+          </div>
+          <div class="calendar-grid" id="calWeekdays"></div>
+          <div class="calendar-grid mt-1" id="calDays"></div>
+        </div>
+        
+        <!-- 主题分布 -->
+        <div class="sidebar-card">
+          <h3 class="font-bold text-sm mb-3 px-1 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--primary)]">
+              <path d="M3 3v18h18"/><path d="M7 16V9M12 16V5M17 16v-4"/>
+            </svg>
+            主题分布
+          </h3>
+          <div id="topicChart"></div>
+        </div>
+
+        <!-- 快速入口 -->
+        <div class="sidebar-card">
+          <h3 class="font-bold text-sm mb-3 px-1 flex items-center gap-2">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="text-[var(--primary)]">
+              <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+              <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+            </svg>
+            快速入口
+          </h3>
+          <div class="space-y-1">
+            <a href="#" target="_blank" rel="noopener" class="quick-link" id="repoLink">
+              <div class="quick-link-icon" style="background:#24292e">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+              </div>
+              <div>
+                <div class="quick-link-text">GitHub 仓库</div>
+                <div class="quick-link-desc">源码 & 数据</div>
+              </div>
+            </a>
+            
+            <a href="https://airs.cuhk.edu.cn/" target="_blank" rel="noopener" class="quick-link">
+              <div class="quick-link-icon" style="background:transparent; border: 1px dashed var(--border-strong);">
+                <img src="" alt="AIRS" class="quick-link-img" onerror="this.style.display='none'">
+              </div>
+              <div>
+                <div class="quick-link-text">AIRS 官网</div>
+                <div class="quick-link-desc">深圳市人工智能与机器人研究院</div>
+              </div>
+            </a>
+            
+            <a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="quick-link">
+              <div class="quick-link-icon" style="background:transparent; border: 1px dashed var(--border-strong);">
+                <img src="" alt="CUHK" class="quick-link-img" onerror="this.style.display='none'">
+              </div>
+              <div>
+                <div class="quick-link-text">港中深官网</div>
+                <div class="quick-link-desc">香港中文大学（深圳）</div>
+              </div>
+            </a>
+            
+            <a href="https://korthos.xyz/ecosystem/products" target="_blank" rel="noopener" class="quick-link">
+              <div class="quick-link-icon" style="background:transparent; border: 1px dashed var(--border-strong);">
+                <img src="" alt="Korthos" class="quick-link-img" onerror="this.style.display='none'">
+              </div>
+              <div>
+                <div class="quick-link-text">机器人产品库</div>
+                <div class="quick-link-desc">全球机器人产品收录</div>
+              </div>
+            </a>
+          </div>
+          
+          <div class="mt-4 pt-4 border-t border-[var(--border)]">
+            <div class="grid grid-cols-2 gap-3">
+              <div class="flex flex-col items-center gap-2">
+                <div class="qr-placeholder" id="qrOfficial">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7M21 14v7M14 21h3"/>
+                  </svg>
+                  <span>公众号<br>二维码</span>
+                </div>
+                <span class="text-[10px] text-[var(--text-2)] font-medium text-center leading-tight">AIRS产业研究<br>公众号</span>
+              </div>
+              <div class="flex flex-col items-center gap-2">
+                <div class="qr-placeholder" id="qrGroup">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7M21 14v7M14 21h3"/>
+                  </svg>
+                  <span>交流群<br>二维码</span>
+                </div>
+                <span class="text-[10px] text-[var(--text-2)] font-medium text-center leading-tight">读者交流群<br>扫码加入</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    
+    <!-- Content -->
+    <section class="col-span-12 lg:col-span-9">
+      <div class="mb-6 flex items-end justify-between flex-wrap gap-4">
+        <div>
+          <div class="text-xs text-[var(--text-3)] mb-1 tracking-wider uppercase font-display" id="viewLabel">当前查看</div>
+          <h2 class="text-3xl md:text-4xl font-black font-display flex items-baseline gap-3">
+            <span id="currentDate">--</span>
+            <span class="text-base font-normal text-[var(--text-3)]" id="currentWeekday"></span>
+          </h2>
+          <div class="text-sm text-[var(--text-2)] mt-1.5">
+            共 <span class="text-[var(--primary)] font-bold font-display" id="currentDayCount">0</span> 条资讯
+            <span id="filterHint" class="ml-2 text-[var(--text-3)] hidden">· 已筛选</span>
+          </div>
+        </div>
+        
+        <div id="topicFilter" class="flex items-center gap-2 flex-wrap"></div>
+      </div>
+      
+      <div id="newsList" class="space-y-4"></div>
+      
+      <div id="emptyState" class="empty-state hidden">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-4 opacity-40">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <p class="text-base font-medium">暂无匹配的资讯</p>
+        <p class="text-sm mt-1">试试切换其他日期或主题</p>
+      </div>
+    </section>
+  </div>
+</main>
+
+<!-- Footer -->
+<footer class="mt-20 bg-[var(--primary-dark)] text-white/70">
+  <div class="max-w-[1480px] mx-auto px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+      <div class="md:col-span-2">
+        <div class="flex items-center gap-3 mb-4">
+          <div class="flex items-center gap-3">
+            <img src="" alt="AIRS" class="logo-img" id="logoAIRSFt" onerror="this.style.display='none'">
+            <div class="logo-divider"></div>
+            <img src="" alt="CUHK" class="logo-img" id="logoCUHKFt" onerror="this.style.display='none'">
+          </div>
+          <div>
+            <div class="font-bold text-white text-base">每日具身智能简报</div>
+            <div class="text-[10px] tracking-[0.15em] uppercase font-display text-purple-300/60">Embodied AI Daily Brief</div>
+          </div>
+        </div>
+        <p class="text-sm leading-relaxed max-w-md">
+          由团队人工筛选整理的具身智能领域每日资讯简报，覆盖学术研究、产品发布、融资动态、政策法规等多个维度。
+        </p>
+      </div>
+      
+      <div>
+        <h4 class="text-white font-bold text-sm mb-3">数据说明</h4>
+        <ul class="text-xs space-y-2 text-white/60">
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>数据来源：飞书多维表格</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>同步方式：GitHub Actions 自动拉取</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>更新频率：每日自动同步</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>最近更新：<span id="lastUpdate">--</span></li>
+        </ul>
+      </div>
+      
+      <div>
+        <h4 class="text-white font-bold text-sm mb-3">相关链接</h4>
+        <ul class="text-xs space-y-2">
+          <li><a href="#" class="hover:text-yellow-300 transition flex items-center gap-2" id="repoLinkFt"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>GitHub 仓库</a></li>
+          <li><a href="https://airs.cuhk.edu.cn/" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>AIRS 官网</a></li>
+          <li><a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>港中深官网</a></li>
+          <li><a href="https://korthos.xyz/ecosystem/products" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>机器人产品库</a></li>
+        </ul>
+      </div>
+    </div>
+    
+    <div class="border-t border-white/10 pt-6 flex items-center justify-between flex-wrap gap-4 text-xs">
+      <div>© 2024 每日具身智能简报 · 数据由飞书多维表格驱动</div>
+      <div class="flex items-center gap-4 text-white/40 font-display tracking-wider">EMBODIED · AI · DAILY</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const TOPIC_COLORS = {
+  '融资动态': '#D946EF',
+  '产品发布': '#F5C518',
+  '产业合作': '#3B82F6',
+  '国内企业': '#EF4444',
+  '海外动态': '#06B6D4',
+  '具身数据': '#84CC16',
+  '产业服务': '#A855F7',
+  '前沿技术': '#F97316',
+  '前沿模型': '#14B8A6',
+  '政策发布': '#6366F1',
+  '学术前沿': '#0EA5E9',
+  '开源成果': '#10B981',
+  '前沿展会': '#EC4899',
+  '行业数据': '#EAB308',
+  'default':   '#9163C9'
+};
+function getTopicColor(topic) { return TOPIC_COLORS[topic] || TOPIC_COLORS['default']; }
+
+const SAMPLE_DATA = [
+  {"整理日期":"2024-12-19","标题":"Figure 02 人形机器人完成新一轮工厂部署测试","主题":"产品发布","简介":"Figure AI 近日宣布其第二代通用人形机器人 Figure 02 已在 BMW 位于美国南卡罗来纳州的工厂完成新一轮部署测试。本次测试聚焦于车身装配线上的物料搬运与上下料任务。","链接":"https://example.com/figure-02-deploy"},
+  {"整理日期":"2024-12-19","标题":"波士顿动力 Atlas 电动版展示双足跑酷新进展","主题":"前沿技术","简介":"波士顿动力在最新发布的技术视频中展示了全电动版 Atlas 人形机器人的双足跑酷能力。视频中 Atlas 在不连贯的台阶、斜坡与狭窄通道中实现了动态平衡。","链接":"https://example.com/atlas-parkour"},
+  {"整理日期":"2024-12-19","标题":"智元机器人完成 A+ 轮融资，估值突破 70 亿元","主题":"融资动态","简介":"智元机器人今日宣布完成 A+ 轮融资，本轮融资由鼎晖投资领投，多家头部机构跟投，公司估值达到 70 亿元人民币。","链接":"https://example.com/agibot-funding"},
+  {"整理日期":"2024-12-18","标题":"斯坦福李飞飞团队发布 BEHAVIOR-1K 基准测试集","主题":"学术前沿","简介":"斯坦福大学李飞飞教授团队发布了 BEHAVIOR-1K 基准测试集，旨在系统评估具身智能体在 1000 种日常家庭任务上的综合能力。","链接":"https://example.com/behavior-1k"},
+  {"整理日期":"2024-12-18","标题":"英伟达开源 GR00T-Mini 人形机器人基础模型","主题":"开源成果","简介":"英伟达在 SIGGRAPH Asia 上宣布开源 GR00T-Mini，这是一款轻量级人形机器人基础模型，参数规模约 1.5B，可在消费级 GPU 上运行。","链接":"https://example.com/groot-mini"},
+  {"整理日期":"2024-12-18","标题":"特斯拉 Optimus 在工厂内开始自主搬运任务","主题":"海外动态","简介":"特斯拉在最新财报电话会议中透露，Optimus 人形机器人已在德州超级工厂内部开始执行自主搬运任务。","链接":"https://example.com/optimus-factory"},
+  {"整理日期":"2024-12-18","标题":"宇树科技 G1 机器人完成全球首次人形机器人马拉松","主题":"国内企业","简介":"宇树科技旗下的 G1 人形机器人在杭州完成了 5 公里马拉松测试，成为全球首个完成此距离的人形机器人。","链接":"https://example.com/unitree-g1-marathon"},
+  {"整理日期":"2024-12-17","标题":"DeepMind 推出 Gemini-Robotics 具身智能基础模型","主题":"前沿模型","简介":"Google DeepMind 发布了 Gemini-Robotics 具身智能基础模型，该模型基于 Gemini 1.5 Pro 训练，在 7 个不同的机器人平台上进行了验证。","链接":"https://example.com/gemini-robotics"},
+  {"整理日期":"2024-12-17","标题":"银河通用获 5 亿元战略融资，宁德时代领投","主题":"融资动态","简介":"具身智能公司银河通用宣布完成 5 亿元战略融资，由宁德时代领投，启明创投、IDG 资本跟投。","链接":"https://example.com/galbot-funding"},
+  {"整理日期":"2024-12-17","标题":"北京人形机器人创新中心发布 Open-Loong 开源平台","主题":"开源成果","简介":"北京人形机器人创新中心正式发布 Open-Loong 开源平台，这是国内首个全栈开源的人形机器人平台。","链接":"https://example.com/open-loong"},
+  {"整理日期":"2024-12-16","标题":"MIT 团队提出 Diff-VLA 扩散具身策略","主题":"学术前沿","简介":"MIT CSAIL 团队提出 Diff-VLA 扩散具身策略框架，将扩散模型与视觉-语言-动作模型相结合，在长时序任务规划上取得突破。","链接":"https://example.com/diff-vla"},
+  {"整理日期":"2024-12-16","标题":"国家发改委发布《人形机器人创新发展指导意见》","主题":"政策发布","简介":"国家发改委、工信部联合发布《人形机器人创新发展指导意见》，明确提出到 2025 年实现人形机器人批量生产。","链接":"https://example.com/policy-2024"},
+  {"整理日期":"2024-12-16","标题":"优必选 Walker S1 进入比亚迪工厂实训","主题":"产业合作","简介":"优必选科技宣布其工业版人形机器人 Walker S1 已正式进入比亚迪长沙工厂开展实训。","链接":"https://example.com/walker-byd"},
+  {"整理日期":"2024-12-13","标题":"傅利叶智能 GR-2 人形机器人开启全球预售","主题":"产品发布","简介":"傅利叶智能宣布其通用人形机器人 GR-2 开启全球预售，定价 19.9 万美元，首批 100 台已售罄。","链接":"https://example.com/fourier-gr2"},
+  {"整理日期":"2024-12-13","标题":"协作机器人安全标准 ISO 15066 升级版发布","主题":"政策发布","简介":"国际机器人联合会（IFR）联合 ISO 发布了协作机器人标准 2.0 版本，首次将人形机器人纳入协作场景的标准化范畴。","链接":"https://example.com/iso-15066"},
+  {"整理日期":"2024-12-12","标题":"Meta 推出 Habitat 3.0 高保真社交仿真环境","主题":"前沿模型","简介":"Meta AI 研究院推出 Habitat 3.0 仿真环境，这是首个支持人形机器人与人类高保真社交交互的大规模仿真平台。","链接":"https://example.com/habitat-3"},
+  {"整理日期":"2024-12-12","标题":"2024 全球机器人大会盘点：具身智能成为绝对主角","主题":"前沿展会","简介":"在刚刚结束的 2024 全球机器人大会上，超过 30 款人形机器人产品亮相，创历史新高。","链接":"https://example.com/robot-conf-2024"},
+  {"整理日期":"2024-12-10","标题":"2024 年 Q3 全球人形机器人市场规模达 12 亿美元","主题":"行业数据","简介":"根据 IFR 最新发布的数据，2024 年第三季度全球人形机器人市场规模达到 12 亿美元，同比增长 187%。","链接":"https://example.com/market-q3"},
+  {"整理日期":"2024-12-05","标题":"具身智能基础数据集 Open-X-Embodiment 更新至 2.0 版本","主题":"具身数据","简介":"Open-X-Embodiment 数据集发布 2.0 版本，新增 50 万条多机器人演示数据，总数据量突破 200 万条。","链接":"https://example.com/open-x-2"},
+  {"整理日期":"2024-11-28","标题":"越疆科技成功赴港上市，协作机器人第一股诞生","主题":"国内企业","简介":"越疆科技正式在港交所主板挂牌上市，成为国内“协作机器人第一股”。","链接":"https://example.com/dobot-ipo"},
+  {"整理日期":"2024-11-20","标题":"星动纪元完成 A 轮融资，专注于通用人形机器人","主题":"融资动态","简介":"星动纪元宣布完成 A 轮融资，本轮融资将主要用于通用人形机器人本体及具身智能大模型的研发。","链接":"https://example.com/robotera-funding"},
+  {"整理日期":"2024-11-15","标题":"世界机器人大会 2024 圆满落幕，多项新品首发","主题":"前沿展会","简介":"2024 世界机器人大会在北京闭幕，展会期间发布了多款人形机器人及核心零部件新品。","链接":"https://example.com/wrc-2024"},
+  {"整理日期":"2024-11-11","标题":"清华大学提出具身智能操作新框架 RoboFlamingo","主题":"学术前沿","简介":"清华大学交叉信息研究院团队提出了 RoboFlamingo 框架，有效提升了机器人在长时序操作任务上的成功率。","链接":"https://example.com/roboflamingo"},
+  {"整理日期":"2024-11-05","标题":"特斯拉发布 FSD V12 端到端神经网络版本","主题":"海外动态","简介":"特斯拉开始向员工推送完全基于端到端神经网络的 FSD V12 版本，取消了大量手写规则代码。","链接":"https://example.com/fsd-v12"},
+  {"整理日期":"2024-10-28","标题":"工信部发布《人形机器人创新发展指导意见》","主题":"政策发布","简介":"工信部印发《人形机器人创新发展指导意见》，提出到 2025 年初步建立人形机器人创新体系。","链接":"https://example.com/miit-policy"},
+  {"整理日期":"2024-10-20","标题":"北大团队发布多模态具身大模型 Rhino","主题":"前沿模型","简介":"北京大学团队发布多模态具身大模型 Rhino，在多个基准测试中取得 SOTA 表现。","链接":"https://example.com/rhino"},
+  {"整理日期":"2024-10-15","标题":"宇树科技发布 G1 人形机器人量产版","主题":"产品发布","简介":"宇树科技正式发布 G1 人形机器人量产版，售价 9.9 万元起，引发行业关注。","链接":"https://example.com/g1-release"},
+  {"整理日期":"2024-10-08","标题":"具身智能创业公司“千寻智能”完成天使轮融资","主题":"融资动态","简介":"千寻智能完成数千万元天使轮融资，专注于空间智能与具身大模型研发。","链接":"https://example.com/qianxun-funding"},
+  {"整理日期":"2024-09-28","标题":"上海发布人形机器人产业政策，打造未来产业先导区","主题":"政策发布","简介":"上海市发布人形机器人产业相关政策，计划打造多个未来产业先导区，推动整机量产。","链接":"https://example.com/sh-policy"},
+  {"整理日期":"2024-09-20","标题":"达闼机器人发布最新版本海睿大模型","主题":"前沿模型","简介":"达闼机器人发布了最新版本的 SeaHairo 海睿大模型，增强了多模态理解与任务规划能力。","链接":"https://example.com/cloudminds"},
+  {"整理日期":"2024-09-10","标题":"国内首个具身智能产业园在深圳揭牌","主题":"产业合作","简介":"国内首个具身智能产业园在深圳正式揭牌，多家上下游企业签署入驻协议。","链接":"https://example.com/sz-park"}
+];
+
+let allData = [];
+let uniqueDates = [];
+let uniqueTopics = [];
+let dateDataMap = {};
+let currentDate = null;
+let currentTopic = 'all';
+let searchKeywords = [];
+let calendarYear = 0;
+let calendarMonth = 0;
+
+const WEEKDAYS_CN = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+const WEEKDAYS_SHORT_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+const WEEKDAYS_CAL = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+const MONTHS_EN = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+
+function formatDate(str) { const d = new Date(str); return `${d.getMonth() + 1}月${d.getDate()}日`; }
+function formatFullDate(str) { const d = new Date(str); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; }
+function getWeekday(str) { return WEEKDAYS_CN[new Date(str).getDay()]; }
+function getWeekdayShortEn(str) { return WEEKDAYS_SHORT_EN[new Date(str).getDay()]; }
+
+async function loadData() {
+  let raw = SAMPLE_DATA;
+  try {
+    const response = await fetch('data.json', { cache: 'no-store' });
+    if (response.ok) {
+      const json = await response.json();
+      if (Array.isArray(json) && json.length > 0) raw = json;
+    }
+  } catch (e) { console.log('data.json 加载失败，使用内置示例数据'); }
+  
+  allData = raw.map(item => ({
+    ...item,
+    dateStr: item['整理日期'],
+    dateObj: new Date(item['整理日期'])
+  })).sort((a, b) => b.dateObj - a.dateObj);
+  
+  const dateSet = new Set();
+  allData.forEach(item => {
+    dateSet.add(item.dateStr);
+    if (!dateDataMap[item.dateStr]) dateDataMap[item.dateStr] = [];
+    dateDataMap[item.dateStr].push(item);
+  });
+  uniqueDates = Array.from(dateSet).sort((a, b) => new Date(b) - new Date(a));
+  
+  const topicSet = new Set();
+  allData.forEach(item => topicSet.add(item['主题']));
+  uniqueTopics = Array.from(topicSet);
+  
+  document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN', {
+    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
+  });
+}
+
+function renderDateList() {
+  const list = document.getElementById('dateList');
+  list.innerHTML = '';
+  
+  if (uniqueDates.length > 0) {
+    const latestDate = uniqueDates[0];
+    const d = new Date(latestDate);
+    const count = dateDataMap[latestDate].length;
+    const isActive = latestDate === currentDate;
+    
+    const topItem = document.createElement('div');
+    topItem.className = 'date-item-top' + (isActive ? ' active' : '');
+    topItem.innerHTML = `
+      <div class="top-date-circle">
+        <span class="weekday">${getWeekdayShortEn(latestDate)}</span>
+        <span class="day-num">${d.getDate()}</span>
+      </div>
+      <div class="date-item-top-info">
+        <div class="date-item-top-date">${d.getFullYear()}年${d.getMonth() + 1}月${d.getDate()}日</div>
+        <div class="date-item-top-weekday">${WEEKDAYS_CN[d.getDay()]} · 最新</div>
+      </div>
+      <span class="date-item-top-count">${count} 条</span>
+    `;
+    topItem.addEventListener('click', () => selectDate(latestDate));
+    list.appendChild(topItem);
+  }
+  
+  const recentDates = uniqueDates.slice(1, 5);
+  recentDates.forEach(dateStr => {
+    const count = dateDataMap[dateStr].length;
+    const item = document.createElement('div');
+    item.className = 'date-item' + (dateStr === currentDate ? ' active' : '');
+    item.innerHTML = `
+      <span class="date-item-date">${formatDate(dateStr)}</span>
+      <span class="date-item-count">${count}</span>
+    `;
+    item.addEventListener('click', () => selectDate(dateStr));
+    list.appendChild(item);
+  });
+  
+  document.getElementById('dateListCount').textContent = `${uniqueDates.length} 天`;
+}
+
+function renderCalendar() {
+  const weekdaysContainer = document.getElementById('calWeekdays');
+  weekdaysContainer.innerHTML = WEEKDAYS_CAL.map(w => 
+    `<div class="calendar-weekday-header">${w}</div>`
+  ).join('');
+  renderCalendarDays();
+}
+
+function renderCalendarDays() {
+  const container = document.getElementById('calDays');
+  const titleEl = document.getElementById('calTitle');
+  
+  if (uniqueDates.length === 0) {
+    container.innerHTML = '';
+    titleEl.textContent = '--';
+    return;
+  }
+  
+  const earliestDate = new Date(uniqueDates[uniqueDates.length - 1]);
+  const latestDate = new Date(uniqueDates[0]);
+  const earliestYM = earliestDate.getFullYear() * 12 + earliestDate.getMonth();
+  const latestYM = latestDate.getFullYear() * 12 + latestDate.getMonth();
+  
+  if (calendarYear === 0 || calendarMonth === 0) {
+    calendarYear = latestDate.getFullYear();
+    calendarMonth = latestDate.getMonth();
+  }
+  
+  const currentYM = calendarYear * 12 + calendarMonth;
+  document.getElementById('calPrev').disabled = currentYM <= earliestYM;
+  document.getElementById('calNext').disabled = currentYM >= latestYM;
+  
+  titleEl.textContent = `${calendarYear} 年 ${String(calendarMonth + 1).padStart(2, '0')} 月`;
+  
+  const firstDay = new Date(calendarYear, calendarMonth, 1);
+  const lastDay = new Date(calendarYear, calendarMonth + 1, 0);
+  const daysInMonth = lastDay.getDate();
+  let startWeekday = firstDay.getDay() - 1;
+  if (startWeekday < 0) startWeekday = 6;
+  
+  let html = '';
+  for (let i = 0; i < startWeekday; i++) {
+    html += '<div class="calendar-day empty"></div>';
+  }
+  for (let day = 1; day <= daysInMonth; day++) {
+    const dateStr = `${calendarYear}-${String(calendarMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    const hasData = dateDataMap[dateStr] && dateDataMap[dateStr].length > 0;
+    const isSelected = dateStr === currentDate;
+    
+    let classes = 'calendar-day';
+    if (hasData) {
+      classes += ' has-data';
+      if (isSelected) classes += ' selected';
+    } else {
+      classes += ' no-data';
+    }
+    
+    const dot = hasData ? '<span class="data-dot"></span>' : '';
+    html += `<div class="${classes}" data-date="${dateStr}">${day}${dot}</div>`;
+  }
+  
+  container.innerHTML = html;
+  container.querySelectorAll('.calendar-day.has-data').forEach(el => {
+    el.addEventListener('click', () => selectDate(el.dataset.date));
+  });
+}
+
+document.getElementById('calPrev').addEventListener('click', () => {
+  calendarMonth--;
+  if (calendarMonth < 0) { calendarMonth = 11; calendarYear--; }
+  renderCalendarDays();
+});
+document.getElementById('calNext').addEventListener('click', () => {
+  calendarMonth++;
+  if (calendarMonth > 11) { calendarMonth = 0; calendarYear++; }
+  renderCalendarDays();
+});
+
+function renderTopicChart() {
+  const container = document.getElementById('topicChart');
+  const topicCounts = {};
+  allData.forEach(item => { topicCounts[item['主题']] = (topicCounts[item['主题']] || 0) + 1; });
+  const sorted = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]);
+  
+  container.innerHTML = sorted.map(([topic, count]) => {
+    const color = getTopicColor(topic);
+    return `
+      <div class="topic-bar-row" data-topic="${topic}">
+        <div class="topic-bar-dot" style="background:${color}"></div>
+        <div class="topic-bar-name">${topic}</div>
+        <div class="topic-bar-count">${count}</div>
+      </div>
+    `;
+  }).join('');
+  
+  container.querySelectorAll('.topic-bar-row').forEach(row => {
+    row.addEventListener('click', () => {
+      currentTopic = row.dataset.topic;
+      updateTopicFilterActive();
+      renderNewsList();
+    });
+  });
+}
+
+function renderTopicFilter() {
+  const container = document.getElementById('topicFilter');
+  let html = `<button class="topic-filter-btn ${currentTopic === 'all' ? 'active' : ''}" data-topic="all">全部</button>`;
+  html += uniqueTopics.map(topic => {
+    const color = getTopicColor(topic);
+    return `<button class="topic-filter-btn ${currentTopic === topic ? 'active' : ''}" data-topic="${topic}">
+      <span class="dot" style="background:${color}"></span>${topic}
+    </button>`;
+  }).join('');
+  container.innerHTML = html;
+  
+  container.querySelectorAll('.topic-filter-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentTopic = btn.dataset.topic;
+      updateTopicFilterActive();
+      renderNewsList();
+    });
+  });
+}
+function updateTopicFilterActive() {
+  document.querySelectorAll('.topic-filter-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.topic === currentTopic);
+  });
+}
+
+function selectDate(dateStr) {
+  currentDate = dateStr;
+  
+  // 【Bug 修复】同步迷你日历的年月，使其跟随选中日期跳转
+  const d = new Date(dateStr);
+  calendarYear = d.getFullYear();
+  calendarMonth = d.getMonth();
+  
+  currentTopic = 'all';
+  searchKeywords = [];
+  const input = document.getElementById('searchInput');
+  input.value = '';
+  document.getElementById('clearSearch').classList.add('hidden');
+  
+  renderDateList();
+  renderTopicFilter();
+  renderNewsList();
+  renderCalendarDays(); // 调用时日历已切换到对应年月
+  
+  window.scrollTo({ top: document.querySelector('main').offsetTop - 80, behavior: 'smooth' });
+}
+
+function getFilteredData() {
+  let data;
+  if (searchKeywords.length > 0) {
+    data = allData.filter(item => {
+      const text = (item['标题'] + ' ' + item['主题'] + ' ' + item['简介']).toLowerCase();
+      return searchKeywords.every(kw => text.includes(kw.toLowerCase()));
+    });
+  } else {
+    data = allData.filter(item => item.dateStr === currentDate);
+  }
+  if (currentTopic !== 'all') {
+    data = data.filter(item => item['主题'] === currentTopic);
+  }
+  return data;
+}
+
+function renderNewsList() {
+  const list = document.getElementById('newsList');
+  const empty = document.getElementById('emptyState');
+  const data = getFilteredData();
+  
+  if (data.length === 0) {
+    list.innerHTML = '';
+    empty.classList.remove('hidden');
+    updateContentHeader();
+    return;
+  }
+  empty.classList.add('hidden');
+  
+  list.innerHTML = data.map((item, idx) => {
+    const color = getTopicColor(item['主题']);
+    return `
+      <article class="news-card fade-in-up" style="--topic-color:${color}; animation-delay:${idx * 60}ms">
+        <div class="flex items-center gap-3 flex-wrap">
+          <span class="news-card-topic" style="background:${color}1A; color:${color}">
+            <span class="dot" style="background:${color}"></span>${item['主题']}
+          </span>
+          <span class="news-card-date">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
+            </svg>
+            ${formatFullDate(item.dateStr)}
+          </span>
+        </div>
+        <h3 class="news-card-title">${highlightText(item['标题'])}</h3>
+        <p class="news-card-summary">${highlightText(item['简介'])}</p>
+        <div class="news-card-meta">
+          <button class="news-card-toggle" onclick="toggleCard(this)">
+            <span class="toggle-label">展开阅读</span>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+          </button>
+          <a href="${item['链接']}" target="_blank" rel="noopener" class="news-card-link">
+            阅读原文
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h10v10M7 17 17 7"/></svg>
+          </a>
+        </div>
+      </article>
+    `;
+  }).join('');
+  
+  updateContentHeader();
+}
+
+function highlightText(text) {
+  if (searchKeywords.length === 0) return text;
+  let result = text;
+  searchKeywords.forEach(kw => {
+    const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    result = result.replace(new RegExp(escaped, 'gi'), m => `<span class="highlight">${m}</span>`);
+  });
+  return result;
+}
+
+function toggleCard(btn) {
+  const card = btn.closest('.news-card');
+  card.classList.toggle('expanded');
+  const label = btn.querySelector('.toggle-label');
+  label.textContent = card.classList.contains('expanded') ? '收起内容' : '展开阅读';
+}
+window.toggleCard = toggleCard;
+
+function updateContentHeader() {
+  const viewLabel = document.getElementById('viewLabel');
+  const currentDateEl = document.getElementById('currentDate');
+  const currentWeekdayEl = document.getElementById('currentWeekday');
+  const currentDayCount = document.getElementById('currentDayCount');
+  const filterHint = document.getElementById('filterHint');
+  
+  const filteredCount = getFilteredData().length;
+  
+  if (searchKeywords.length > 0) {
+    viewLabel.textContent = '搜索结果';
+    currentDateEl.textContent = `"${searchKeywords.join(' ')}"`;
+    currentWeekdayEl.textContent = '';
+    currentDayCount.textContent = filteredCount;
+    filterHint.classList.add('hidden');
+  } else {
+    viewLabel.textContent = '当前查看';
+    currentDateEl.textContent = formatFullDate(currentDate);
+    currentWeekdayEl.textContent = getWeekday(currentDate);
+    currentDayCount.textContent = filteredCount;
+    filterHint.classList.toggle('hidden', currentTopic === 'all');
+  }
+}
+
+function animateCounter(id, target) {
+  const el = document.getElementById(id);
+  const duration = 1200;
+  const start = parseInt(el.textContent) || 0;
+  const startTime = performance.now();
+  function update(now) {
+    const t = Math.min(1, (now - startTime) / duration);
+    const eased = 1 - Math.pow(1 - t, 3);
+    el.textContent = Math.round(start + (target - start) * eased);
+    if (t < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+function updateStats() {
+  animateCounter('totalCount', allData.length);
+  animateCounter('totalDays', uniqueDates.length);
+  const todayCount = uniqueDates.length > 0 ? dateDataMap[uniqueDates[0]].length : 0;
+  animateCounter('todayCount', todayCount);
+  if (uniqueDates.length > 0) {
+    const d = new Date(uniqueDates[0]);
+    document.getElementById('todayDate').textContent = `${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`;
+    document.getElementById('todayWeekday').textContent = getWeekday(uniqueDates[0]);
+  }
+}
+
+const heroSection = document.getElementById('heroSection');
+heroSection.addEventListener('mousemove', (e) => {
+  const rect = heroSection.getBoundingClientRect();
+  const x = e.clientX - rect.left;
+  const y = e.clientY - rect.top;
+  heroSection.style.setProperty('--mouse-x', x + 'px');
+  heroSection.style.setProperty('--mouse-y', y + 'px');
+});
+
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const value = e.target.value.trim();
+  searchKeywords = value ? value.split(/\s+/).filter(k => k.length > 0) : [];
+  document.getElementById('clearSearch').classList.toggle('hidden', searchKeywords.length === 0);
+  currentTopic = 'all';
+  updateTopicFilterActive();
+  renderNewsList();
+});
+document.getElementById('clearSearch').addEventListener('click', () => {
+  document.getElementById('searchInput').value = '';
+  searchKeywords = [];
+  document.getElementById('clearSearch').classList.add('hidden');
+  renderNewsList();
+});
+
+document.addEventListener('keydown', (e) => {
+  if (document.activeElement.tagName === 'INPUT') return;
+  if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+    const idx = uniqueDates.indexOf(currentDate);
+    if (idx === -1) return;
+    const newIdx = e.key === 'ArrowLeft' ? Math.min(uniqueDates.length - 1, idx + 1) : Math.max(0, idx - 1);
+    if (newIdx !== idx) selectDate(uniqueDates[newIdx]);
+  }
+});
+
+async function init() {
+  await loadData();
+  renderDateList();
+  renderCalendar();
+  renderTopicChart();
+  renderTopicFilter();
+  if (uniqueDates.length > 0) {
+    currentDate = uniqueDates[0];
+    renderDateList();
+    renderNewsList();
+    updateContentHeader();
+    renderCalendarDays();
+  }
+  updateStats();
+}
+init();
+</script>
+</body>
+</html>

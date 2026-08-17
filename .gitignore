@@ -1,0 +1,7 @@
+# 本地密钥和依赖绝不提交。
+.env
+.env.*
+!.env.example
+node_modules/
+npm-debug.log*
+.DS_Store
