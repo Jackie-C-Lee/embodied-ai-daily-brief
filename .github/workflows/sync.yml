@@ -15,7 +15,8 @@ permissions:
 
 concurrency:
   group: feishu-bitable-sync-and-deploy
-  cancel-in-progress: false
+  # 飞书 Agent 可能在一次整理中连续新增多条记录；只保留最后一次请求。
+  cancel-in-progress: true
 
 jobs:
   sync-and-deploy:
@@ -33,6 +34,9 @@ jobs:
         with:
           node-version: 20
 
+      - name: 等待飞书批次写入完成
+        run: sleep 60
+
       - name: 从飞书多维表格同步数据
         run: npm run sync
         env:
@@ -44,15 +48,34 @@ jobs:
 
       - name: 保存同步后的数据版本
         run: |
-          if git diff --quiet -- public/data.json; then
-            echo "data.json 没有变化，无需创建提交。"
-            exit 0
-          fi
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add public/data.json
-          git commit -m "chore: sync Feishu daily brief"
-          git push
+
+          # 正常情况下并发组已经保证只有一个任务推送；如果远端在任务运行期间
+          # 仍发生变化，则重新从飞书生成全量数据后重试，避免 non-fast-forward。
+          for attempt in 1 2 3; do
+            if [ "$attempt" -gt 1 ]; then
+              git fetch origin main
+              git reset --hard origin/main
+              npm run sync
+            fi
+
+            if git diff --quiet -- public/data.json; then
+              echo "data.json 没有变化，无需创建提交。"
+              exit 0
+            fi
+
+            git add public/data.json
+            git commit -m "chore: sync Feishu daily brief"
+            if git push origin HEAD:main; then
+              exit 0
+            fi
+            echo "第 ${attempt} 次推送遇到远端变化，准备重试。"
+            sleep 5
+          done
+
+          echo "重试 3 次后仍无法推送 data.json。"
+          exit 1
 
       - name: 配置 GitHub Pages
         uses: actions/configure-pages@v5

@@ -53,15 +53,17 @@ body {
   background: linear-gradient(90deg, transparent, rgba(245,197,24,0.5), transparent);
 }
 .logo-img {
-  width: 36px; height: 36px; object-fit: contain;
-  border-radius: 6px; background: rgba(255,255,255,0.1); padding: 3px;
+  width: 64px; height: 46px; object-fit: cover; display: block;
+  border-radius: 9px; background: #fff; padding: 2px;
+  border: 1px solid rgba(255,255,255,0.72);
+  box-shadow: 0 3px 12px rgba(16, 7, 31, 0.18);
 }
-.logo-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.2); }
+.logo-divider { width: 1px; height: 30px; background: rgba(255,255,255,0.34); margin: 0 2px; }
 .search-box {
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.15);
   border-radius: 999px; transition: all 0.2s;
-  max-width: 320px;
+  max-width: 360px;
 }
 .search-box:focus-within {
   background: rgba(255, 255, 255, 0.15);
@@ -94,8 +96,8 @@ body {
     linear-gradient(rgba(245,197,24,0.15) 1px, transparent 1px),
     linear-gradient(90deg, rgba(245,197,24,0.15) 1px, transparent 1px);
   background-size: 60px 60px;
-  -webkit-mask-image: radial-gradient(circle 200px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
-  mask-image: radial-gradient(circle 200px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle 100px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
+  mask-image: radial-gradient(circle 100px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
   opacity: 0; transition: opacity 0.4s;
 }
 .hero:hover .hero-grid-highlight { opacity: 1; }
@@ -149,6 +151,37 @@ body {
 
 /* ============ Sidebar ============ */
 .sidebar-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; padding: 16px; }
+
+/* 仅控制桌面端左侧栏的滚动行为；内部模块的视觉设计保持不变。 */
+@media (min-width: 1024px) {
+  .sidebar-scroll-shell {
+    max-height: calc(100vh - 7rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding-right: 4px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border-strong) transparent;
+  }
+  .sidebar-scroll-shell::-webkit-scrollbar { width: 6px; }
+  .sidebar-scroll-shell::-webkit-scrollbar-track { background: transparent; }
+  .sidebar-scroll-shell::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 3px; }
+  .sidebar-scroll-shell::-webkit-scrollbar-thumb:hover { background: var(--primary-3); }
+}
+@media (max-width: 1023px) {
+  .sidebar-scroll-shell { max-height: none; overflow: visible; }
+}
+
+.all-dates-btn {
+  width: 100%; display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 12px; margin-bottom: 8px; border-radius: 10px; cursor: pointer;
+  background: white; border: 1px solid var(--border); color: var(--text-2);
+  font-family: inherit; font-size: 13px; font-weight: 600; line-height: 1.4;
+  text-align: left; transition: all 0.2s;
+}
+.all-dates-btn:hover { background: var(--primary-soft); border-color: var(--primary-3); color: var(--primary); }
+.all-dates-btn.active { background: rgba(178, 17, 143, 0.963); border-color: var(--primary); color: white; box-shadow: 0 4px 14px rgba(151, 11, 106, 0.18); }
+.all-dates-count { font: 700 11px/1 'Space Grotesk'; padding: 3px 8px; border-radius: 999px; background: var(--primary-soft); color: var(--primary); }
+.all-dates-btn.active .all-dates-count { background: rgba(255,255,255,0.2); color: var(--accent-2); }
 
 /* 时间轴：顶格最新日期 */
 .date-item-top {
@@ -262,20 +295,25 @@ body {
 }
 .quick-link:hover { background: var(--primary-soft); border-color: var(--border); transform: translateX(2px); }
 .quick-link-icon {
-  width: 32px; height: 32px; border-radius: 8px;
+  width: 54px; height: 48px; border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
-  flex-shrink: 0; overflow: hidden;
+  flex-shrink: 0; overflow: hidden; background: #fff;
+  border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(74, 29, 122, 0.08);
 }
-.quick-link-img { width: 100%; height: 100%; object-fit: contain; border-radius: 6px; }
+.quick-link-img { width: 100%; height: 100%; object-fit: contain; border-radius: 8px; transform: none; }
+.quick-link-icon[style*="#24292e"] { background: #24292e; border-color: #24292e; box-shadow: none; }
+.quick-link-icon[style*="#24292e"] .quick-link-img { transform: none; }
 .quick-link-text { font-size: 12px; font-weight: 600; color: var(--text-1); line-height: 1.3; }
 .quick-link-desc { font-size: 10px; color: var(--text-3); margin-top: 1px; }
 .qr-placeholder {
   width: 100%; aspect-ratio: 1; max-width: 110px;
-  background: var(--bg); border: 1px dashed var(--border-strong);
+  background: white; border: 1px solid var(--border);
   border-radius: 10px; display: flex; flex-direction: column;
   align-items: center; justify-content: center; color: var(--text-3);
-  font-size: 10px; text-align: center; padding: 8px;
+  font-size: 10px; text-align: center; padding: 5px; overflow: hidden;
+  box-shadow: 0 3px 10px rgba(74, 29, 122, 0.07);
 }
+.qr-image { width: 100%; height: 100%; object-fit: contain; display: block; border-radius: 5px; }
 
 /* ============ 主题筛选 ============ */
 .topic-filter-btn {
@@ -325,8 +363,38 @@ body {
   transition: all 0.2s;
 }
 .news-card-link:hover { background: var(--accent-2); transform: translateX(2px); box-shadow: 0 4px 12px rgba(245, 197, 24, 0.4); }
+.news-card-source-note {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 16px;
+  background: #F1F0F3; color: #77727F; border-radius: 999px;
+  font-size: 13px; font-weight: 600;
+}
 .news-card-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); margin-top: 8px; }
 .news-card-date { font-family: 'Space Grotesk'; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+
+.search-tokens { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 8px; }
+.search-tokens-label { font-size: 12px; color: var(--text-3); }
+.search-chip {
+  display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px 4px 11px;
+  border: 1px solid var(--border-strong); border-radius: 999px; background: var(--primary-soft);
+  color: var(--primary); font-family: inherit; font-size: 12px; font-weight: 600; line-height: 1.3;
+  cursor: pointer; transition: all 0.2s;
+}
+.search-chip:hover { border-color: var(--primary-3); background: #E8DDF6; }
+.search-chip-x { font-size: 15px; line-height: 0.8; opacity: 0.65; }
+.search-clear-all { border: none; background: none; color: var(--text-3); font-family: inherit; font-size: 12px; font-weight: 500; line-height: 1.3; cursor: pointer; padding: 4px 2px; }
+.search-clear-all:hover { color: var(--primary); }
+
+.pagination { display: flex; align-items: center; justify-content: center; gap: 6px; margin-top: 24px; flex-wrap: wrap; }
+.pagination-btn {
+  min-width: 34px; height: 34px; padding: 0 10px; border-radius: 9px;
+  border: 1px solid var(--border); background: white; color: var(--text-2);
+  font: 600 12px/1 'Space Grotesk'; cursor: pointer; transition: all 0.2s;
+}
+.pagination-btn:hover:not(:disabled) { border-color: var(--primary-3); color: var(--primary); background: var(--primary-soft); }
+.pagination-btn.active { border-color: var(--primary); background: var(--primary); color: white; }
+.pagination-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.pagination-ellipsis { padding: 0 2px; color: var(--text-3); }
+.pagination-summary { width: 100%; text-align: center; font-size: 12px; color: var(--text-3); margin-top: 2px; }
 
 @keyframes fadeInUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
 .fade-in-up { animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1) both; }
@@ -344,6 +412,8 @@ body {
   .news-card { padding: 18px; }
   .news-card-title { font-size: 17px; }
   .header-stat { display: none; }
+  .pagination { gap: 4px; }
+  .pagination-btn { min-width: 32px; height: 32px; padding: 0 8px; }
 }
 </style>
 </head>
@@ -353,9 +423,9 @@ body {
 <header class="header">
   <div class="max-w-[1480px] mx-auto px-6 py-3 flex items-center gap-4">
     <div class="flex items-center gap-3 flex-shrink-0">
-      <img src="" alt="AIRS" class="logo-img" id="logoAIRS" onerror="this.style.display='none'">
+      <img src="assets/images/airs-logo.svg" alt="AIRS" class="logo-img" id="logoAIRS">
       <div class="logo-divider"></div>
-      <img src="" alt="CUHK" class="logo-img" id="logoCUHK" onerror="this.style.display='none'">
+      <img src="assets/images/cuhksz-logo.svg" alt="香港中文大学（深圳）" class="logo-img" id="logoCUHK">
     </div>
     
     <div class="flex flex-col leading-tight flex-shrink-0">
@@ -410,10 +480,10 @@ body {
         </div>
         <h1 class="text-4xl md:text-5xl font-black leading-[1.15] mb-4 font-display tracking-tight">
           追踪具身智能前沿
-          <span class="block bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">每日精选行业洞察</span>
+          <span class="block bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">每日精选产业洞察</span>
         </h1>
         <p class="text-purple-100/80 text-base md:text-lg leading-relaxed max-w-xl">
-          汇聚全球具身智能领域最新研究、产品、融资与政策动态，由团队人工筛选整理，每日发布。
+          汇聚全球具身智能产业最新研究、产品、融资与企业动态，由产业研究团队筛选整理，每日发布。
         </p>
       </div>
       
@@ -438,7 +508,7 @@ body {
   <div class="grid grid-cols-12 gap-6">
     <!-- Sidebar -->
     <aside class="col-span-12 lg:col-span-3">
-      <div class="lg:sticky lg:top-24 space-y-4">
+      <div class="lg:sticky lg:top-24 space-y-4 sidebar-scroll-shell">
         <!-- 时间轴 -->
         <div class="sidebar-card">
           <div class="flex items-center justify-between mb-3 px-1">
@@ -450,6 +520,10 @@ body {
             </h3>
             <span class="text-[11px] text-[var(--text-3)] font-display" id="dateListCount">0 天</span>
           </div>
+          <button type="button" class="all-dates-btn" id="allDatesBtn" aria-pressed="false">
+            <span>全部资讯</span>
+            <span class="all-dates-count" id="allDatesCount">0</span>
+          </button>
           <div id="dateList" class="pr-1"></div>
         </div>
         
@@ -494,37 +568,37 @@ body {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
               </div>
               <div>
-                <div class="quick-link-text">GitHub 仓库</div>
+                <div class="quick-link-text">GitHub</div>
                 <div class="quick-link-desc">源码 & 数据</div>
               </div>
             </a>
             
             <a href="https://airs.cuhk.edu.cn/" target="_blank" rel="noopener" class="quick-link">
-              <div class="quick-link-icon" style="background:transparent; border: 1px dashed var(--border-strong);">
-                <img src="" alt="AIRS" class="quick-link-img" onerror="this.style.display='none'">
+              <div class="quick-link-icon">
+                <img src="assets/images/airs-logo.svg" alt="AIRS" class="quick-link-img">
               </div>
               <div>
-                <div class="quick-link-text">AIRS 官网</div>
+                <div class="quick-link-text">AIRS</div>
                 <div class="quick-link-desc">深圳市人工智能与机器人研究院</div>
               </div>
             </a>
             
             <a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="quick-link">
-              <div class="quick-link-icon" style="background:transparent; border: 1px dashed var(--border-strong);">
-                <img src="" alt="CUHK" class="quick-link-img" onerror="this.style.display='none'">
+              <div class="quick-link-icon">
+                <img src="assets/images/cuhksz-logo.svg" alt="香港中文大学（深圳）" class="quick-link-img">
               </div>
               <div>
-                <div class="quick-link-text">港中深官网</div>
+                <div class="quick-link-text">CUHKSZ</div>
                 <div class="quick-link-desc">香港中文大学（深圳）</div>
               </div>
             </a>
             
             <a href="https://korthos.xyz/ecosystem/products" target="_blank" rel="noopener" class="quick-link">
-              <div class="quick-link-icon" style="background:transparent; border: 1px dashed var(--border-strong);">
-                <img src="" alt="Korthos" class="quick-link-img" onerror="this.style.display='none'">
+              <div class="quick-link-icon">
+                <img src="assets/images/korthos-logo.svg" alt="Korthos" class="quick-link-img">
               </div>
               <div>
-                <div class="quick-link-text">机器人产品库</div>
+                <div class="quick-link-text">Robot</div>
                 <div class="quick-link-desc">全球机器人产品收录</div>
               </div>
             </a>
@@ -534,21 +608,15 @@ body {
             <div class="grid grid-cols-2 gap-3">
               <div class="flex flex-col items-center gap-2">
                 <div class="qr-placeholder" id="qrOfficial">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1">
-                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7M21 14v7M14 21h3"/>
-                  </svg>
-                  <span>公众号<br>二维码</span>
+                  <img src="assets/images/airs_industryResearch.jpg" alt="AIRS产业研究公众号二维码" class="qr-image">
                 </div>
                 <span class="text-[10px] text-[var(--text-2)] font-medium text-center leading-tight">AIRS产业研究<br>公众号</span>
               </div>
               <div class="flex flex-col items-center gap-2">
                 <div class="qr-placeholder" id="qrGroup">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mb-1">
-                    <rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h7v7M21 14v7M14 21h3"/>
-                  </svg>
-                  <span>交流群<br>二维码</span>
+                  <img src="assets/images/airs-official.png" alt="AIRS研究院公众号二维码" class="qr-image">
                 </div>
-                <span class="text-[10px] text-[var(--text-2)] font-medium text-center leading-tight">读者交流群<br>扫码加入</span>
+                <span class="text-[10px] text-[var(--text-2)] font-medium text-center leading-tight">AIRS研究院<br>公众号</span>
               </div>
             </div>
           </div>
@@ -569,12 +637,15 @@ body {
             共 <span class="text-[var(--primary)] font-bold font-display" id="currentDayCount">0</span> 条资讯
             <span id="filterHint" class="ml-2 text-[var(--text-3)] hidden">· 已筛选</span>
           </div>
+          <div id="searchTokens" class="search-tokens hidden"></div>
         </div>
         
         <div id="topicFilter" class="flex items-center gap-2 flex-wrap"></div>
       </div>
       
       <div id="newsList" class="space-y-4"></div>
+
+      <nav id="pagination" class="pagination hidden" aria-label="资讯分页"></nav>
       
       <div id="emptyState" class="empty-state hidden">
         <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="mx-auto mb-4 opacity-40">
@@ -594,9 +665,9 @@ body {
       <div class="md:col-span-2">
         <div class="flex items-center gap-3 mb-4">
           <div class="flex items-center gap-3">
-            <img src="" alt="AIRS" class="logo-img" id="logoAIRSFt" onerror="this.style.display='none'">
+            <img src="assets/images/airs-logo.svg" alt="AIRS" class="logo-img" id="logoAIRSFt">
             <div class="logo-divider"></div>
-            <img src="" alt="CUHK" class="logo-img" id="logoCUHKFt" onerror="this.style.display='none'">
+            <img src="assets/images/cuhksz-logo.svg" alt="香港中文大学（深圳）" class="logo-img" id="logoCUHKFt">
           </div>
           <div>
             <div class="font-bold text-white text-base">每日具身智能简报</div>
@@ -604,15 +675,15 @@ body {
           </div>
         </div>
         <p class="text-sm leading-relaxed max-w-md">
-          由团队人工筛选整理的具身智能领域每日资讯简报，覆盖学术研究、产品发布、融资动态、政策法规等多个维度。
+          由产业研究团队筛选整理的具身智能领域每日资讯简报，覆盖技术前沿、学术研究、产品发布、融资动态、企业信息等多个维度。
         </p>
       </div>
       
       <div>
         <h4 class="text-white font-bold text-sm mb-3">数据说明</h4>
         <ul class="text-xs space-y-2 text-white/60">
-          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>数据来源：飞书多维表格</li>
-          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>同步方式：GitHub Actions 自动拉取</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>数据来源：网络公开资料</li>
+          <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>同步方式：GitHub Actions </li>
           <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>更新频率：每日自动同步</li>
           <li class="flex items-center gap-2"><span class="w-1 h-1 bg-yellow-400 rounded-full"></span>最近更新：<span id="lastUpdate">--</span></li>
         </ul>
@@ -623,14 +694,14 @@ body {
         <ul class="text-xs space-y-2">
           <li><a href="#" class="hover:text-yellow-300 transition flex items-center gap-2" id="repoLinkFt"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>GitHub 仓库</a></li>
           <li><a href="https://airs.cuhk.edu.cn/" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>AIRS 官网</a></li>
-          <li><a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>港中深官网</a></li>
+          <li><a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>香港中文大学（深圳）官网</a></li>
           <li><a href="https://korthos.xyz/ecosystem/products" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>机器人产品库</a></li>
         </ul>
       </div>
     </div>
     
     <div class="border-t border-white/10 pt-6 flex items-center justify-between flex-wrap gap-4 text-xs">
-      <div>© 2024 每日具身智能简报 · 数据由飞书多维表格驱动</div>
+      <div>© 每日具身智能简报 · AIRS飞书多维表格</div>
       <div class="flex items-center gap-4 text-white/40 font-display tracking-wider">EMBODIED · AI · DAILY</div>
     </div>
   </div>
@@ -658,8 +729,8 @@ function getTopicColor(topic) { return TOPIC_COLORS[topic] || TOPIC_COLORS['defa
 
 const SAMPLE_DATA = [
   {"整理日期":"2024-12-19","标题":"Figure 02 人形机器人完成新一轮工厂部署测试","主题":"产品发布","简介":"Figure AI 近日宣布其第二代通用人形机器人 Figure 02 已在 BMW 位于美国南卡罗来纳州的工厂完成新一轮部署测试。本次测试聚焦于车身装配线上的物料搬运与上下料任务。","链接":"https://example.com/figure-02-deploy"},
-  {"整理日期":"2024-12-19","标题":"波士顿动力 Atlas 电动版展示双足跑酷新进展","主题":"前沿技术","简介":"波士顿动力在最新发布的技术视频中展示了全电动版 Atlas 人形机器人的双足跑酷能力。视频中 Atlas 在不连贯的台阶、斜坡与狭窄通道中实现了动态平衡。","链接":"https://example.com/atlas-parkour"},
-  {"整理日期":"2024-12-19","标题":"智元机器人完成 A+ 轮融资，估值突破 70 亿元","主题":"融资动态","简介":"智元机器人今日宣布完成 A+ 轮融资，本轮融资由鼎晖投资领投，多家头部机构跟投，公司估值达到 70 亿元人民币。","链接":"https://example.com/agibot-funding"},
+  {"整理日期":"2024-12-19","标题":"波士顿动力 Atlas 电动版展示双足跑酷新进展","主题":"前沿技术","简介":"波士顿动力在最新发布的技术视频中展示了全电动版 Atlas 人形机器人的双足跑酷能力。视频中 Atlas 在不连贯的台阶、斜坡与狭窄通道中实现了动态平衡。","链接":"公众号学习"},
+  {"整理日期":"2024-12-19","标题":"智元机器人完成 A+ 轮融资，估值突破 70 亿元","主题":"融资动态","简介":"智元机器人今日宣布完成 A+ 轮融资，本轮融资由鼎晖投资领投，多家头部机构跟投，公司估值达到 70 亿元人民币。","链接":"公众号学习"},
   {"整理日期":"2024-12-18","标题":"斯坦福李飞飞团队发布 BEHAVIOR-1K 基准测试集","主题":"学术前沿","简介":"斯坦福大学李飞飞教授团队发布了 BEHAVIOR-1K 基准测试集，旨在系统评估具身智能体在 1000 种日常家庭任务上的综合能力。","链接":"https://example.com/behavior-1k"},
   {"整理日期":"2024-12-18","标题":"英伟达开源 GR00T-Mini 人形机器人基础模型","主题":"开源成果","简介":"英伟达在 SIGGRAPH Asia 上宣布开源 GR00T-Mini，这是一款轻量级人形机器人基础模型，参数规模约 1.5B，可在消费级 GPU 上运行。","链接":"https://example.com/groot-mini"},
   {"整理日期":"2024-12-18","标题":"特斯拉 Optimus 在工厂内开始自主搬运任务","主题":"海外动态","简介":"特斯拉在最新财报电话会议中透露，Optimus 人形机器人已在德州超级工厂内部开始执行自主搬运任务。","链接":"https://example.com/optimus-factory"},
@@ -686,8 +757,8 @@ const SAMPLE_DATA = [
   {"整理日期":"2024-10-15","标题":"宇树科技发布 G1 人形机器人量产版","主题":"产品发布","简介":"宇树科技正式发布 G1 人形机器人量产版，售价 9.9 万元起，引发行业关注。","链接":"https://example.com/g1-release"},
   {"整理日期":"2024-10-08","标题":"具身智能创业公司“千寻智能”完成天使轮融资","主题":"融资动态","简介":"千寻智能完成数千万元天使轮融资，专注于空间智能与具身大模型研发。","链接":"https://example.com/qianxun-funding"},
   {"整理日期":"2024-09-28","标题":"上海发布人形机器人产业政策，打造未来产业先导区","主题":"政策发布","简介":"上海市发布人形机器人产业相关政策，计划打造多个未来产业先导区，推动整机量产。","链接":"https://example.com/sh-policy"},
-  {"整理日期":"2024-09-20","标题":"达闼机器人发布最新版本海睿大模型","主题":"前沿模型","简介":"达闼机器人发布了最新版本的 SeaHairo 海睿大模型，增强了多模态理解与任务规划能力。","链接":"https://example.com/cloudminds"},
-  {"整理日期":"2024-09-10","标题":"国内首个具身智能产业园在深圳揭牌","主题":"产业合作","简介":"国内首个具身智能产业园在深圳正式揭牌，多家上下游企业签署入驻协议。","链接":"https://example.com/sz-park"}
+  {"整理日期":"2024-09-20","标题":"达闼机器人发布最新版本海睿大模型","主题":"前沿模型","简介":"达闼机器人发布了最新版本的 SeaHairo 海睿大模型，增强了多模态理解与任务规划能力。","链接":"公众号学习"},
+  {"整理日期":"2024-09-10","标题":"国内首个具身智能产业园在深圳揭牌","主题":"产业合作","简介":"国内首个具身智能产业园在深圳正式揭牌，多家上下游企业签署入驻协议。","链接":"公众号学习"}
 ];
 
 let allData = [];
@@ -697,8 +768,10 @@ let dateDataMap = {};
 let currentDate = null;
 let currentTopic = 'all';
 let searchKeywords = [];
+let currentPage = 1;
+const PAGE_SIZE = 10;
 let calendarYear = 0;
-let calendarMonth = 0;
+let calendarMonth = -1;
 
 const WEEKDAYS_CN = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const WEEKDAYS_SHORT_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
@@ -709,6 +782,30 @@ function formatDate(str) { const d = new Date(str); return `${d.getMonth() + 1}�
 function formatFullDate(str) { const d = new Date(str); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; }
 function getWeekday(str) { return WEEKDAYS_CN[new Date(str).getDay()]; }
 function getWeekdayShortEn(str) { return WEEKDAYS_SHORT_EN[new Date(str).getDay()]; }
+function escapeHtml(value) {
+  return String(value ?? '').replace(/[&<>'"]/g, char => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+  }[char]));
+}
+function isHttpUrl(value) {
+  try {
+    const url = new URL(String(value ?? '').trim());
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch (e) {
+    return false;
+  }
+}
+function hasKeywordMatch(item) {
+  if (searchKeywords.length === 0) return true;
+  const text = [item['标题'], item['主题'], item['简介']].map(value => String(value ?? '')).join(' ').toLowerCase();
+  return searchKeywords.every(keyword => text.includes(keyword.toLowerCase()));
+}
+function getTopicScopeData() {
+  return allData.filter(item => {
+    const matchesDate = !currentDate || item.dateStr === currentDate;
+    return matchesDate && hasKeywordMatch(item);
+  });
+}
 
 async function loadData() {
   let raw = SAMPLE_DATA;
@@ -746,6 +843,11 @@ async function loadData() {
 function renderDateList() {
   const list = document.getElementById('dateList');
   list.innerHTML = '';
+  const allDatesBtn = document.getElementById('allDatesBtn');
+  allDatesBtn.classList.toggle('active', currentDate === null);
+  allDatesBtn.setAttribute('aria-pressed', currentDate === null ? 'true' : 'false');
+  document.getElementById('allDatesCount').textContent = allData.length;
+  allDatesBtn.onclick = selectAllDates;
   
   if (uniqueDates.length > 0) {
     const latestDate = uniqueDates[0];
@@ -809,7 +911,7 @@ function renderCalendarDays() {
   const earliestYM = earliestDate.getFullYear() * 12 + earliestDate.getMonth();
   const latestYM = latestDate.getFullYear() * 12 + latestDate.getMonth();
   
-  if (calendarYear === 0 || calendarMonth === 0) {
+  if (calendarYear === 0 || calendarMonth < 0) {
     calendarYear = latestDate.getFullYear();
     calendarMonth = latestDate.getMonth();
   }
@@ -867,15 +969,18 @@ document.getElementById('calNext').addEventListener('click', () => {
 function renderTopicChart() {
   const container = document.getElementById('topicChart');
   const topicCounts = {};
-  allData.forEach(item => { topicCounts[item['主题']] = (topicCounts[item['主题']] || 0) + 1; });
+  getTopicScopeData().forEach(item => {
+    const topic = String(item['主题'] || '未分类');
+    topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+  });
   const sorted = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]);
   
   container.innerHTML = sorted.map(([topic, count]) => {
     const color = getTopicColor(topic);
     return `
-      <div class="topic-bar-row" data-topic="${topic}">
+      <div class="topic-bar-row" data-topic="${escapeHtml(topic)}">
         <div class="topic-bar-dot" style="background:${color}"></div>
-        <div class="topic-bar-name">${topic}</div>
+        <div class="topic-bar-name">${escapeHtml(topic)}</div>
         <div class="topic-bar-count">${count}</div>
       </div>
     `;
@@ -883,9 +988,9 @@ function renderTopicChart() {
   
   container.querySelectorAll('.topic-bar-row').forEach(row => {
     row.addEventListener('click', () => {
-      currentTopic = row.dataset.topic;
-      updateTopicFilterActive();
-      renderNewsList();
+      currentTopic = currentTopic === row.dataset.topic ? 'all' : row.dataset.topic;
+      currentPage = 1;
+      refreshView();
     });
   });
 }
@@ -895,8 +1000,8 @@ function renderTopicFilter() {
   let html = `<button class="topic-filter-btn ${currentTopic === 'all' ? 'active' : ''}" data-topic="all">全部</button>`;
   html += uniqueTopics.map(topic => {
     const color = getTopicColor(topic);
-    return `<button class="topic-filter-btn ${currentTopic === topic ? 'active' : ''}" data-topic="${topic}">
-      <span class="dot" style="background:${color}"></span>${topic}
+    return `<button class="topic-filter-btn ${currentTopic === topic ? 'active' : ''}" data-topic="${escapeHtml(topic)}">
+      <span class="dot" style="background:${color}"></span>${escapeHtml(topic)}
     </button>`;
   }).join('');
   container.innerHTML = html;
@@ -904,8 +1009,9 @@ function renderTopicFilter() {
   container.querySelectorAll('.topic-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       currentTopic = btn.dataset.topic;
+      currentPage = 1;
       updateTopicFilterActive();
-      renderNewsList();
+      refreshView();
     });
   });
 }
@@ -916,63 +1022,75 @@ function updateTopicFilterActive() {
 }
 
 function selectDate(dateStr) {
+  if (currentDate === dateStr) {
+    selectAllDates();
+    return;
+  }
   currentDate = dateStr;
+  currentPage = 1;
   
   // 【Bug 修复】同步迷你日历的年月，使其跟随选中日期跳转
   const d = new Date(dateStr);
   calendarYear = d.getFullYear();
   calendarMonth = d.getMonth();
-  
-  currentTopic = 'all';
-  searchKeywords = [];
-  const input = document.getElementById('searchInput');
-  input.value = '';
-  document.getElementById('clearSearch').classList.add('hidden');
-  
+
+  refreshView(true);
+}
+
+function selectAllDates() {
+  if (currentDate === null) return;
+  currentDate = null;
+  currentPage = 1;
+  refreshView(true);
+}
+
+function refreshView(shouldScroll = false) {
   renderDateList();
+  renderTopicChart();
   renderTopicFilter();
   renderNewsList();
-  renderCalendarDays(); // 调用时日历已切换到对应年月
-  
-  window.scrollTo({ top: document.querySelector('main').offsetTop - 80, behavior: 'smooth' });
+  renderCalendarDays();
+  renderSearchTokens();
+  if (shouldScroll) {
+    window.scrollTo({ top: document.querySelector('main').offsetTop - 80, behavior: 'smooth' });
+  }
 }
 
 function getFilteredData() {
-  let data;
-  if (searchKeywords.length > 0) {
-    data = allData.filter(item => {
-      const text = (item['标题'] + ' ' + item['主题'] + ' ' + item['简介']).toLowerCase();
-      return searchKeywords.every(kw => text.includes(kw.toLowerCase()));
-    });
-  } else {
-    data = allData.filter(item => item.dateStr === currentDate);
-  }
-  if (currentTopic !== 'all') {
-    data = data.filter(item => item['主题'] === currentTopic);
-  }
-  return data;
+  return allData.filter(item => {
+    const matchesDate = !currentDate || item.dateStr === currentDate;
+    const matchesTopic = currentTopic === 'all' || item['主题'] === currentTopic;
+    return matchesDate && matchesTopic && hasKeywordMatch(item);
+  });
 }
 
 function renderNewsList() {
   const list = document.getElementById('newsList');
   const empty = document.getElementById('emptyState');
   const data = getFilteredData();
+  const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
+  currentPage = Math.min(currentPage, totalPages);
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const pageData = data.slice(start, start + PAGE_SIZE);
   
   if (data.length === 0) {
     list.innerHTML = '';
     empty.classList.remove('hidden');
+    renderPagination(0);
     updateContentHeader();
     return;
   }
   empty.classList.add('hidden');
   
-  list.innerHTML = data.map((item, idx) => {
-    const color = getTopicColor(item['主题']);
+  list.innerHTML = pageData.map((item, idx) => {
+    const topic = String(item['主题'] || '未分类');
+    const color = getTopicColor(topic);
+    const source = renderSource(item['链接']);
     return `
       <article class="news-card fade-in-up" style="--topic-color:${color}; animation-delay:${idx * 60}ms">
         <div class="flex items-center gap-3 flex-wrap">
           <span class="news-card-topic" style="background:${color}1A; color:${color}">
-            <span class="dot" style="background:${color}"></span>${item['主题']}
+            <span class="dot" style="background:${color}"></span>${escapeHtml(topic)}
           </span>
           <span class="news-card-date">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -988,21 +1106,74 @@ function renderNewsList() {
             <span class="toggle-label">展开阅读</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
           </button>
-          <a href="${item['链接']}" target="_blank" rel="noopener" class="news-card-link">
-            阅读原文
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h10v10M7 17 17 7"/></svg>
-          </a>
+          ${source}
         </div>
       </article>
     `;
   }).join('');
-  
+
+  renderPagination(data.length);
   updateContentHeader();
 }
 
+function renderSource(value) {
+  const sourceText = String(value ?? '').trim();
+  if (isHttpUrl(sourceText)) {
+    return `<a href="${escapeHtml(sourceText)}" target="_blank" rel="noopener noreferrer" class="news-card-link">
+      阅读原文
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 7h10v10M7 17 17 7"/></svg>
+    </a>`;
+  }
+  const label = sourceText ? '摘自公众号文章' : '源自公开报道';
+  return `<span class="news-card-source-note" title="${escapeHtml(sourceText || label)}">${label}</span>`;
+}
+
+function renderPagination(totalCount) {
+  const container = document.getElementById('pagination');
+  const totalPages = Math.ceil(totalCount / PAGE_SIZE);
+  if (totalPages <= 1) {
+    container.innerHTML = '';
+    container.classList.add('hidden');
+    return;
+  }
+
+  const pages = [];
+  const addPage = page => { if (!pages.includes(page)) pages.push(page); };
+  addPage(1);
+  for (let page = Math.max(2, currentPage - 1); page <= Math.min(totalPages - 1, currentPage + 1); page++) addPage(page);
+  addPage(totalPages);
+
+  let previous = 0;
+  const pageButtons = [];
+  pages.forEach(page => {
+    if (previous && page - previous > 1) pageButtons.push('<span class="pagination-ellipsis">…</span>');
+    pageButtons.push(`<button type="button" class="pagination-btn ${page === currentPage ? 'active' : ''}" data-page="${page}" aria-label="第 ${page} 页" ${page === currentPage ? 'aria-current="page"' : ''}>${page}</button>`);
+    previous = page;
+  });
+
+  const start = (currentPage - 1) * PAGE_SIZE + 1;
+  const end = Math.min(currentPage * PAGE_SIZE, totalCount);
+  container.innerHTML = `
+    <button type="button" class="pagination-btn" data-page="${currentPage - 1}" ${currentPage === 1 ? 'disabled' : ''}>上一页</button>
+    ${pageButtons.join('')}
+    <button type="button" class="pagination-btn" data-page="${currentPage + 1}" ${currentPage === totalPages ? 'disabled' : ''}>下一页</button>
+    <div class="pagination-summary">第 ${start}–${end} 条，共 ${totalCount} 条</div>
+  `;
+  container.classList.remove('hidden');
+  container.querySelectorAll('[data-page]').forEach(button => {
+    button.addEventListener('click', () => {
+      const nextPage = Number(button.dataset.page);
+      if (nextPage < 1 || nextPage > totalPages || nextPage === currentPage) return;
+      currentPage = nextPage;
+      renderNewsList();
+      document.getElementById('newsList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+}
+
 function highlightText(text) {
-  if (searchKeywords.length === 0) return text;
-  let result = text;
+  let result = escapeHtml(text);
+  if (searchKeywords.length === 0) return result;
   searchKeywords.forEach(kw => {
     const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     result = result.replace(new RegExp(escaped, 'gi'), m => `<span class="highlight">${m}</span>`);
@@ -1029,10 +1200,18 @@ function updateContentHeader() {
   
   if (searchKeywords.length > 0) {
     viewLabel.textContent = '搜索结果';
-    currentDateEl.textContent = `"${searchKeywords.join(' ')}"`;
+    currentDateEl.textContent = '搜索结果';
     currentWeekdayEl.textContent = '';
     currentDayCount.textContent = filteredCount;
-    filterHint.classList.add('hidden');
+    filterHint.textContent = currentDate || currentTopic !== 'all' ? '· 已叠加筛选' : '';
+    filterHint.classList.toggle('hidden', !currentDate && currentTopic === 'all');
+  } else if (currentDate === null) {
+    viewLabel.textContent = currentTopic === 'all' ? '全部资讯' : '主题筛选';
+    currentDateEl.textContent = '全部资讯';
+    currentWeekdayEl.textContent = '';
+    currentDayCount.textContent = filteredCount;
+    filterHint.textContent = currentTopic === 'all' ? '' : '· 已筛选主题';
+    filterHint.classList.toggle('hidden', currentTopic === 'all');
   } else {
     viewLabel.textContent = '当前查看';
     currentDateEl.textContent = formatFullDate(currentDate);
@@ -1040,6 +1219,46 @@ function updateContentHeader() {
     currentDayCount.textContent = filteredCount;
     filterHint.classList.toggle('hidden', currentTopic === 'all');
   }
+}
+
+function renderSearchTokens() {
+  const container = document.getElementById('searchTokens');
+  if (searchKeywords.length === 0) {
+    container.innerHTML = '';
+    container.classList.add('hidden');
+    return;
+  }
+  container.innerHTML = `
+    <span class="search-tokens-label">同时包含</span>
+    ${searchKeywords.map((keyword, index) => `
+      <button type="button" class="search-chip" data-keyword-index="${index}" aria-label="移除关键词 ${escapeHtml(keyword)}">
+        ${escapeHtml(keyword)}<span class="search-chip-x" aria-hidden="true">×</span>
+      </button>
+    `).join('')}
+    <button type="button" class="search-clear-all">清除全部</button>
+  `;
+  container.classList.remove('hidden');
+  container.querySelectorAll('[data-keyword-index]').forEach(button => {
+    button.addEventListener('click', () => {
+      searchKeywords.splice(Number(button.dataset.keywordIndex), 1);
+      syncSearchInput();
+      currentPage = 1;
+      refreshView();
+    });
+  });
+  container.querySelector('.search-clear-all').addEventListener('click', clearSearch);
+}
+
+function syncSearchInput() {
+  document.getElementById('searchInput').value = searchKeywords.join(' ');
+  document.getElementById('clearSearch').classList.toggle('hidden', searchKeywords.length === 0);
+}
+
+function clearSearch() {
+  searchKeywords = [];
+  syncSearchInput();
+  currentPage = 1;
+  refreshView();
 }
 
 function animateCounter(id, target) {
@@ -1079,17 +1298,12 @@ heroSection.addEventListener('mousemove', (e) => {
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const value = e.target.value.trim();
-  searchKeywords = value ? value.split(/\s+/).filter(k => k.length > 0) : [];
-  document.getElementById('clearSearch').classList.toggle('hidden', searchKeywords.length === 0);
-  currentTopic = 'all';
-  updateTopicFilterActive();
-  renderNewsList();
+  searchKeywords = value ? value.split(/[\s,，、]+/).filter(k => k.length > 0) : [];
+  currentPage = 1;
+  refreshView();
 });
 document.getElementById('clearSearch').addEventListener('click', () => {
-  document.getElementById('searchInput').value = '';
-  searchKeywords = [];
-  document.getElementById('clearSearch').classList.add('hidden');
-  renderNewsList();
+  clearSearch();
 });
 
 document.addEventListener('keydown', (e) => {
@@ -1104,17 +1318,17 @@ document.addEventListener('keydown', (e) => {
 
 async function init() {
   await loadData();
+  if (uniqueDates.length > 0) {
+    currentDate = uniqueDates[0];
+    calendarYear = new Date(currentDate).getFullYear();
+    calendarMonth = new Date(currentDate).getMonth();
+  }
   renderDateList();
   renderCalendar();
   renderTopicChart();
   renderTopicFilter();
-  if (uniqueDates.length > 0) {
-    currentDate = uniqueDates[0];
-    renderDateList();
-    renderNewsList();
-    updateContentHeader();
-    renderCalendarDays();
-  }
+  renderNewsList();
+  renderSearchTokens();
   updateStats();
 }
 init();
