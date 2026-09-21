@@ -26,6 +26,20 @@
   --text-3: #9B95AC;
   --border: #EAE3F5;
   --border-strong: #D4C5EA;
+  /* 主题色集中在 CSS 中，编辑器可直接点击色块打开调色板。 */
+  --topic-financing: #f81b1b;
+  --topic-open-source: #10B981;
+  --topic-model: #0d43af;
+  --topic-product: #1da834;
+  --topic-frontier: #ed7621;
+  --topic-policy: #6366F1;
+  --topic-embodied-data: #c6c017;
+  --topic-industry-data: #105136;
+  --topic-events: #e04190;
+  --topic-deployment: #a4640a;
+  --topic-domestic: #6ca0d4;
+  --topic-overseas: #06B6D4;
+  --topic-default: #9163C9;
   --mouse-x: 50%;
   --mouse-y: 50%;
 }
@@ -72,6 +86,27 @@ body {
 }
 .search-box input { background: transparent; border: none; outline: none; color: white; width: 100%; }
 .search-box input::placeholder { color: rgba(255,255,255,0.5); }
+.search-controls { width: min(100%, 500px); margin-left: auto; display: flex; align-items: center; gap: 8px; }
+.search-settings { position: relative; flex-shrink: 0; }
+.search-settings-trigger {
+  width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.16); border-radius: 50%; background: rgba(255, 255, 255, 0.08);
+  color: rgba(255,255,255,0.78); cursor: pointer; transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.2s;
+}
+.search-settings-trigger:hover, .search-settings-trigger[aria-expanded="true"] { background: rgba(245, 197, 24, 0.16); border-color: rgba(245, 197, 24, 0.6); color: var(--accent); }
+.search-settings-trigger[aria-expanded="true"] { transform: rotate(18deg); }
+.search-scope {
+  position: absolute; top: calc(100% + 10px); right: 0; z-index: 70; min-width: 190px; padding: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.15); border-radius: 10px; background: rgba(45, 15, 78, 0.98);
+  box-shadow: 0 16px 38px rgba(19, 6, 36, 0.3); backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  opacity: 0; visibility: hidden; transform: translateY(-5px) scale(0.98); transform-origin: top right;
+  transition: opacity 0.18s ease, transform 0.18s ease, visibility 0.18s;
+}
+.search-scope.open { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+.search-scope-label { display: block; padding: 5px 8px 6px; color: rgba(255,255,255,0.47); font: 600 10px/1.2 inherit; letter-spacing: 0.08em; }
+.search-scope-btn { width: 100%; border: 0; background: transparent; color: rgba(255,255,255,0.72); padding: 8px; text-align: left; font: 500 12px/1.4 inherit; cursor: pointer; border-radius: 6px; transition: background 0.18s, color 0.18s; }
+.search-scope-btn:hover { color: white; background: rgba(255,255,255,0.08); }
+.search-scope-btn.active { color: var(--primary-dark); background: var(--accent); font-weight: 700; }
 .header-stat { text-align: right; flex-shrink: 0; }
 .header-stat-num { color: #FFD93D; font-weight: 700; font-size: 16px; font-family: 'Space Grotesk'; line-height: 1.2; }
 .header-stat-label { color: rgba(255,255,255,0.5); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; }
@@ -281,8 +316,9 @@ body {
 .calendar-day.selected .data-dot { background: white; }
 
 /* ============ 主题分布 ============ */
-.topic-bar-row { display: flex; align-items: center; gap: 8px; padding: 5px 8px; border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+.topic-bar-row { display: flex; align-items: center; gap: 8px; width: 100%; padding: 5px 8px; border: 1px solid transparent; border-radius: 8px; background: transparent; cursor: pointer; color: inherit; font-family: inherit; text-align: left; transition: background 0.2s, border-color 0.2s; }
 .topic-bar-row:hover { background: var(--primary-soft); }
+.topic-bar-row.active { background: var(--primary-soft); border-color: var(--primary-3); }
 .topic-bar-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
 .topic-bar-name { font-size: 12px; color: var(--text-2); flex: 1; }
 .topic-bar-count { font-family: 'Space Grotesk'; font-size: 12px; font-weight: 600; color: var(--text-1); }
@@ -329,19 +365,41 @@ body {
 /* ============ 资讯卡片 ============ */
 .news-card {
   background: var(--bg-card); border: 1px solid var(--border);
-  border-radius: 16px; padding: 24px 28px;
+  border-radius: 16px; padding: 22px 26px 22px 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative; overflow: hidden;
+  position: relative; overflow: hidden; display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 22px;
 }
 .news-card::before {
-  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px;
-  background: var(--topic-color, var(--primary)); transition: width 0.3s;
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 112px; z-index: 0;
+  background: color-mix(in srgb, var(--topic-color, var(--primary)) 18%, transparent);
+  transform: scaleX(0); transform-origin: left center; pointer-events: none;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
 }
-.news-card:hover { border-color: var(--primary-3); box-shadow: 0 12px 32px -8px rgba(74, 29, 122, 0.15); transform: translateY(-2px); }
-.news-card:hover::before { width: 6px; }
-.news-card-topic { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 600; }
+.news-card::after {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; z-index: 0;
+  background: var(--topic-color, var(--primary)); pointer-events: none;
+  transition: opacity 0.18s ease 0.2s;
+}
+.news-card > * { position: relative; z-index: 1; }
+.news-card:hover { border-color: var(--primary-3); box-shadow: 0 18px 42px -8px rgba(74, 29, 122, 0.25); transform: translateY(-4px) scale(1.018) !important; transform-origin: center center; z-index: 2; }
+.news-card:hover::before {
+  transform: scaleX(1);
+  transition-duration: 0.35s;
+}
+.news-card:hover::after {
+  opacity: 0;
+  transition: opacity 0.18s ease;
+}
+.news-card-date-rail { padding: 3px 18px 5px 26px; border-right: 1px solid var(--border); color: var(--text-3); text-align: center; transition: border-color 0.3s ease; }
+.news-card-date-month { width: 48px; height: 48px; margin: 0 auto 7px; display: grid; place-items: center; border-radius: 50%; background: var(--primary-soft); border: 1px solid var(--border-strong); color: var(--primary); font: 700 16px/1 'Noto Sans SC', sans-serif; box-shadow: inset 0 1px 0 rgba(255,255,255,0.9); }
+.news-card-date-day { font: 700 27px/1.1 'Space Grotesk'; color: var(--text-1); margin: 3px 0 2px; }
+.news-card-date-weekday { font-size: 11px; color: var(--text-3); }
+.news-card-tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; min-height: 24px; }
+.news-card-topic { display: inline-flex; align-items: center; gap: 6px; padding: 4px 9px; border: 1px solid transparent; border-radius: 999px; font: 600 11px/1.35 inherit; cursor: pointer; transition: transform 0.2s, border-color 0.2s, background 0.2s; }
+.news-card-topic:hover { transform: translateY(-1px); border-color: currentColor; }
+.news-card-topic.active { border-color: currentColor; box-shadow: 0 2px 8px rgba(74, 29, 122, 0.14); }
 .news-card-topic .dot { width: 6px; height: 6px; border-radius: 50%; }
-.news-card-title { font-size: 20px; font-weight: 700; line-height: 1.35; color: var(--text-1); margin: 12px 0 8px; letter-spacing: -0.01em; transition: color 0.2s; }
+.news-card-title { font-size: 20px; font-weight: 700; line-height: 1.35; color: var(--text-1); margin: 12px 0 8px; letter-spacing: 0; transition: color 0.2s; }
 .news-card:hover .news-card-title { color: var(--primary); }
 .news-card-summary {
   color: var(--text-2); font-size: 14px; line-height: 1.75; margin-bottom: 16px;
@@ -370,6 +428,9 @@ body {
 }
 .news-card-meta { display: flex; align-items: center; justify-content: space-between; padding-top: 16px; border-top: 1px solid var(--border); margin-top: 8px; }
 .news-card-date { font-family: 'Space Grotesk'; font-size: 12px; color: var(--text-3); display: flex; align-items: center; gap: 6px; }
+
+.footer-link-icon { width: 15px; height: 15px; display: inline-flex; align-items: center; justify-content: center; flex: 0 0 15px; overflow: hidden; border-radius: 3px; background: white; }
+.footer-link-icon img { width: 100%; height: 100%; object-fit: contain; }
 
 .search-tokens { display: flex; align-items: center; gap: 7px; flex-wrap: wrap; margin-top: 8px; }
 .search-tokens-label { font-size: 12px; color: var(--text-3); }
@@ -404,12 +465,27 @@ body {
 .custom-scroll::-webkit-scrollbar-thumb:hover { background: var(--primary-3); }
 .empty-state { text-align: center; padding: 80px 20px; color: var(--text-3); }
 .highlight { background: linear-gradient(180deg, transparent 60%, rgba(245, 197, 24, 0.45) 60%); padding: 0 2px; border-radius: 2px; }
+.results-flash { animation: resultsFlash 0.75s ease-out; }
+@keyframes resultsFlash { 0% { box-shadow: 0 0 0 0 rgba(145, 99, 201, 0.36); } 55% { box-shadow: 0 0 0 10px rgba(145, 99, 201, 0); } 100% { box-shadow: 0 0 0 0 rgba(145, 99, 201, 0); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: 0.01ms !important; } }
 .counter { font-feature-settings: 'tnum'; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 1024px) { .hero-orbit { display: none; } }
 @media (max-width: 768px) {
   .hero h1 { font-size: 28px !important; }
-  .news-card { padding: 18px; }
+  .header > div { flex-wrap: wrap; }
+  .search-controls { width: 100%; order: 3; margin-left: 0; }
+  .header > div > .flex.items-center.gap-5 { display: none; }
+  .search-scope { right: 0; }
+  .news-card { padding: 18px; display: block; }
+  .news-card::before { width: 100%; transform: scaleX(0); }
+  .news-card::after { width: 6px; }
+  .news-card:hover::before { transform: scaleX(0); }
+  .news-card:hover::after { opacity: 1; }
+  .news-card-date-rail { display: flex; align-items: center; gap: 8px; padding: 0 0 12px; margin-bottom: 12px; border-right: 0; border-bottom: 1px solid var(--border); text-align: left; }
+  .news-card-date-month { order: 1; width: 36px; height: 36px; margin: 0; font-size: 11px; }
+  .news-card-date-day { font-size: 18px; margin: 0; order: 2; }
+  .news-card-date-weekday { order: 3; }
   .news-card-title { font-size: 17px; }
   .header-stat { display: none; }
   .pagination { gap: 4px; }
@@ -433,14 +509,27 @@ body {
       <span class="text-purple-200/60 text-[10px] tracking-[0.15em] uppercase font-display">Embodied AI Daily</span>
     </div>
     
-    <div class="search-box flex items-center gap-2 px-4 py-2 ml-auto w-full">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2">
-        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
-      </svg>
-      <input type="text" id="searchInput" placeholder="搜索标题、主题、简介（多关键词用空格隔开）" class="text-sm">
-      <button id="clearSearch" class="hidden text-purple-200 hover:text-white" aria-label="清空搜索">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
-      </button>
+    <div class="search-controls">
+      <div class="search-box flex items-center gap-2 px-4 py-2 w-full">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.5)" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input type="text" id="searchInput" placeholder="搜索标题与简介（空格分隔多个词）" class="text-sm">
+        <button id="clearSearch" class="hidden text-purple-200 hover:text-white" aria-label="清空搜索">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="search-settings">
+        <button type="button" class="search-settings-trigger" id="searchSettingsTrigger" aria-label="更多搜索设置" title="更多搜索设置" aria-expanded="false" aria-controls="searchScope">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h8M16 7h4M4 17h4M12 17h8M12 4v6M8 14v6"/></svg>
+        </button>
+        <div class="search-scope" id="searchScope" role="menu" aria-label="检索范围">
+          <span class="search-scope-label">搜索范围</span>
+          <button type="button" class="search-scope-btn active" data-search-scope="all" role="menuitemradio">全部内容</button>
+          <button type="button" class="search-scope-btn" data-search-scope="title" role="menuitemradio">仅在标题中检索</button>
+          <button type="button" class="search-scope-btn" data-search-scope="summary" role="menuitemradio">仅在简介中检索</button>
+        </div>
+      </div>
     </div>
     
     <div class="flex items-center gap-5 flex-shrink-0">
@@ -504,7 +593,7 @@ body {
 </section>
 
 <!-- Main -->
-<main class="max-w-[1480px] mx-auto px-6 py-10 relative">
+<main class="max-w-[1280px] mx-auto px-6 py-10 relative">
   <div class="grid grid-cols-12 gap-6">
     <!-- Sidebar -->
     <aside class="col-span-12 lg:col-span-3">
@@ -563,7 +652,7 @@ body {
             快速入口
           </h3>
           <div class="space-y-1">
-            <a href="#" target="_blank" rel="noopener" class="quick-link" id="repoLink">
+            <a href="https://github.com/Jackie-C-Lee/embodied-ai-daily-brief" target="_blank" rel="noopener noreferrer" class="quick-link" id="repoLink">
               <div class="quick-link-icon" style="background:#24292e">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
               </div>
@@ -692,10 +781,10 @@ body {
       <div>
         <h4 class="text-white font-bold text-sm mb-3">相关链接</h4>
         <ul class="text-xs space-y-2">
-          <li><a href="#" class="hover:text-yellow-300 transition flex items-center gap-2" id="repoLinkFt"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>GitHub 仓库</a></li>
-          <li><a href="https://airs.cuhk.edu.cn/" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>AIRS 官网</a></li>
-          <li><a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>香港中文大学（深圳）官网</a></li>
-          <li><a href="https://korthos.xyz/ecosystem/products" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><path d="m15 3 6 6"/><path d="m15 9 6-6"/></svg>机器人产品库</a></li>
+          <li><a href="https://github.com/Jackie-C-Lee/embodied-ai-daily-brief" target="_blank" rel="noopener noreferrer" class="hover:text-yellow-300 transition flex items-center gap-2" id="repoLinkFt"><svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>GitHub 仓库</a></li>
+          <li><a href="https://airs.cuhk.edu.cn/" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><span class="footer-link-icon"><img src="assets/images/airs-logo.svg" alt="" aria-hidden="true"></span>AIRS 官网</a></li>
+          <li><a href="https://www.cuhk.edu.cn/zh-hans" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><span class="footer-link-icon"><img src="assets/images/cuhksz-logo.svg" alt="" aria-hidden="true"></span>香港中文大学（深圳）官网</a></li>
+          <li><a href="https://korthos.xyz/ecosystem/products" target="_blank" rel="noopener" class="hover:text-yellow-300 transition flex items-center gap-2"><span class="footer-link-icon"><img src="assets/images/korthos-logo.svg" alt="" aria-hidden="true"></span>机器人产品库</a></li>
         </ul>
       </div>
     </div>
@@ -708,24 +797,26 @@ body {
 </footer>
 
 <script>
+const rootStyles = getComputedStyle(document.documentElement);
+const cssTopicColor = (name) => rootStyles.getPropertyValue(name).trim();
 const TOPIC_COLORS = {
-  '融资动态': '#D946EF',
-  '产品发布': '#F5C518',
-  '产业合作': '#3B82F6',
-  '国内企业': '#EF4444',
-  '海外动态': '#06B6D4',
-  '具身数据': '#84CC16',
-  '产业服务': '#A855F7',
-  '前沿技术': '#F97316',
-  '前沿模型': '#14B8A6',
-  '政策发布': '#6366F1',
-  '学术前沿': '#0EA5E9',
-  '开源成果': '#10B981',
-  '前沿展会': '#EC4899',
-  '行业数据': '#EAB308',
-  'default':   '#9163C9'
+  '融资动态': cssTopicColor('--topic-financing'),
+  '开源成果': cssTopicColor('--topic-open-source'),
+  '具身模型': cssTopicColor('--topic-model'),
+  '产品发布': cssTopicColor('--topic-product'),
+  '前沿技术': cssTopicColor('--topic-frontier'),
+  '政策发布': cssTopicColor('--topic-policy'),
+  '具身数据': cssTopicColor('--topic-embodied-data'),
+  '产业数据': cssTopicColor('--topic-industry-data'),
+  '展会赛事': cssTopicColor('--topic-events'),
+  '产业落地': cssTopicColor('--topic-deployment'),
+  '国内企业': cssTopicColor('--topic-domestic'),
+  '海外动态': cssTopicColor('--topic-overseas'),
+  'default':   cssTopicColor('--topic-default')
 };
 function getTopicColor(topic) { return TOPIC_COLORS[topic] || TOPIC_COLORS['default']; }
+const TOPIC_ORDER = ['融资动态', '开源成果', '具身模型', '产品发布', '前沿技术', '政策发布', '具身数据', '产业数据', '展会赛事', '产业落地', '国内企业', '海外动态'];
+const SEARCH_SCOPE_LABELS = { all: '标题与简介', title: '标题', summary: '简介' };
 
 const SAMPLE_DATA = [
   {"整理日期":"2024-12-19","标题":"Figure 02 人形机器人完成新一轮工厂部署测试","主题":"产品发布","简介":"Figure AI 近日宣布其第二代通用人形机器人 Figure 02 已在 BMW 位于美国南卡罗来纳州的工厂完成新一轮部署测试。本次测试聚焦于车身装配线上的物料搬运与上下料任务。","链接":"https://example.com/figure-02-deploy"},
@@ -766,8 +857,9 @@ let uniqueDates = [];
 let uniqueTopics = [];
 let dateDataMap = {};
 let currentDate = null;
-let currentTopic = 'all';
+let selectedTopics = new Set();
 let searchKeywords = [];
+let searchScope = 'all';
 let currentPage = 1;
 const PAGE_SIZE = 10;
 let calendarYear = 0;
@@ -776,7 +868,6 @@ let calendarMonth = -1;
 const WEEKDAYS_CN = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
 const WEEKDAYS_SHORT_EN = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
 const WEEKDAYS_CAL = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-const MONTHS_EN = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
 
 function formatDate(str) { const d = new Date(str); return `${d.getMonth() + 1}月${d.getDate()}日`; }
 function formatFullDate(str) { const d = new Date(str); return `${d.getFullYear()}.${String(d.getMonth() + 1).padStart(2, '0')}.${String(d.getDate()).padStart(2, '0')}`; }
@@ -795,9 +886,21 @@ function isHttpUrl(value) {
     return false;
   }
 }
+function normalizeTopics(value) {
+  return String(value ?? '')
+    .split(';')
+    .map(topic => topic.trim())
+    .filter(Boolean)
+    .filter((topic, index, topics) => topics.indexOf(topic) === index);
+}
 function hasKeywordMatch(item) {
   if (searchKeywords.length === 0) return true;
-  const text = [item['标题'], item['主题'], item['简介']].map(value => String(value ?? '')).join(' ').toLowerCase();
+  const fields = searchScope === 'title'
+    ? [item['标题']]
+    : searchScope === 'summary'
+      ? [item['简介']]
+      : [item['标题'], item['简介']];
+  const text = fields.map(value => String(value ?? '')).join(' ').toLowerCase();
   return searchKeywords.every(keyword => text.includes(keyword.toLowerCase()));
 }
 function getTopicScopeData() {
@@ -819,6 +922,7 @@ async function loadData() {
   
   allData = raw.map(item => ({
     ...item,
+    topics: normalizeTopics(item['主题']),
     dateStr: item['整理日期'],
     dateObj: new Date(item['整理日期'])
   })).sort((a, b) => b.dateObj - a.dateObj);
@@ -831,9 +935,7 @@ async function loadData() {
   });
   uniqueDates = Array.from(dateSet).sort((a, b) => new Date(b) - new Date(a));
   
-  const topicSet = new Set();
-  allData.forEach(item => topicSet.add(item['主题']));
-  uniqueTopics = Array.from(topicSet);
+  uniqueTopics = TOPIC_ORDER;
   
   document.getElementById('lastUpdate').textContent = new Date().toLocaleString('zh-CN', {
     year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit'
@@ -970,37 +1072,38 @@ function renderTopicChart() {
   const container = document.getElementById('topicChart');
   const topicCounts = {};
   getTopicScopeData().forEach(item => {
-    const topic = String(item['主题'] || '未分类');
-    topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+    item.topics.forEach(topic => {
+      topicCounts[topic] = (topicCounts[topic] || 0) + 1;
+    });
   });
-  const sorted = Object.entries(topicCounts).sort((a, b) => b[1] - a[1]);
+  const sorted = TOPIC_ORDER
+    .filter(topic => topicCounts[topic])
+    .sort((a, b) => topicCounts[b] - topicCounts[a]);
   
-  container.innerHTML = sorted.map(([topic, count]) => {
+  container.innerHTML = sorted.map(topic => {
     const color = getTopicColor(topic);
     return `
-      <div class="topic-bar-row" data-topic="${escapeHtml(topic)}">
+      <button type="button" class="topic-bar-row ${selectedTopics.has(topic) ? 'active' : ''}" data-topic="${escapeHtml(topic)}" aria-pressed="${selectedTopics.has(topic)}">
         <div class="topic-bar-dot" style="background:${color}"></div>
         <div class="topic-bar-name">${escapeHtml(topic)}</div>
-        <div class="topic-bar-count">${count}</div>
-      </div>
+        <div class="topic-bar-count">${topicCounts[topic]}</div>
+      </button>
     `;
   }).join('');
   
   container.querySelectorAll('.topic-bar-row').forEach(row => {
     row.addEventListener('click', () => {
-      currentTopic = currentTopic === row.dataset.topic ? 'all' : row.dataset.topic;
-      currentPage = 1;
-      refreshView();
+      toggleTopic(row.dataset.topic);
     });
   });
 }
 
 function renderTopicFilter() {
   const container = document.getElementById('topicFilter');
-  let html = `<button class="topic-filter-btn ${currentTopic === 'all' ? 'active' : ''}" data-topic="all">全部</button>`;
+  let html = `<button type="button" class="topic-filter-btn ${selectedTopics.size === 0 ? 'active' : ''}" data-topic="all">全部主题</button>`;
   html += uniqueTopics.map(topic => {
     const color = getTopicColor(topic);
-    return `<button class="topic-filter-btn ${currentTopic === topic ? 'active' : ''}" data-topic="${escapeHtml(topic)}">
+    return `<button type="button" class="topic-filter-btn ${selectedTopics.has(topic) ? 'active' : ''}" data-topic="${escapeHtml(topic)}" aria-pressed="${selectedTopics.has(topic)}">
       <span class="dot" style="background:${color}"></span>${escapeHtml(topic)}
     </button>`;
   }).join('');
@@ -1008,17 +1111,38 @@ function renderTopicFilter() {
   
   container.querySelectorAll('.topic-filter-btn').forEach(btn => {
     btn.addEventListener('click', () => {
-      currentTopic = btn.dataset.topic;
-      currentPage = 1;
-      updateTopicFilterActive();
-      refreshView();
+      if (btn.dataset.topic === 'all') {
+        selectedTopics.clear();
+        currentPage = 1;
+        refreshView();
+        return;
+      }
+      toggleTopic(btn.dataset.topic);
     });
   });
 }
-function updateTopicFilterActive() {
-  document.querySelectorAll('.topic-filter-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.topic === currentTopic);
-  });
+function toggleTopic(topic) {
+  if (selectedTopics.has(topic)) selectedTopics.delete(topic);
+  else selectedTopics.add(topic);
+  currentPage = 1;
+  refreshView();
+}
+
+function applyCardTopic(topic) {
+  selectedTopics = new Set([topic]);
+  currentDate = null;
+  currentPage = 1;
+  refreshView();
+  requestAnimationFrame(scrollToResults);
+}
+
+function scrollToResults() {
+  const content = document.getElementById('newsList');
+  const headerOffset = document.querySelector('.header').offsetHeight + 18;
+  const top = window.scrollY + content.getBoundingClientRect().top - headerOffset;
+  window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+  content.classList.remove('results-flash');
+  requestAnimationFrame(() => content.classList.add('results-flash'));
 }
 
 function selectDate(dateStr) {
@@ -1059,7 +1183,7 @@ function refreshView(shouldScroll = false) {
 function getFilteredData() {
   return allData.filter(item => {
     const matchesDate = !currentDate || item.dateStr === currentDate;
-    const matchesTopic = currentTopic === 'all' || item['主题'] === currentTopic;
+    const matchesTopic = selectedTopics.size === 0 || [...selectedTopics].every(topic => item.topics.includes(topic));
     return matchesDate && matchesTopic && hasKeywordMatch(item);
   });
 }
@@ -1083,34 +1207,41 @@ function renderNewsList() {
   empty.classList.add('hidden');
   
   list.innerHTML = pageData.map((item, idx) => {
-    const topic = String(item['主题'] || '未分类');
-    const color = getTopicColor(topic);
+    const topics = item.topics.length > 0 ? item.topics : ['未分类'];
+    const color = getTopicColor(topics[0]);
+    const date = item.dateObj;
     const source = renderSource(item['链接']);
     return `
       <article class="news-card fade-in-up" style="--topic-color:${color}; animation-delay:${idx * 60}ms">
-        <div class="flex items-center gap-3 flex-wrap">
-          <span class="news-card-topic" style="background:${color}1A; color:${color}">
-            <span class="dot" style="background:${color}"></span>${escapeHtml(topic)}
-          </span>
-          <span class="news-card-date">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/>
-            </svg>
-            ${formatFullDate(item.dateStr)}
-          </span>
+        <div class="news-card-date-rail">
+          <div class="news-card-date-month">${date.getMonth() + 1}月</div>
+          <div class="news-card-date-day">${String(date.getDate()).padStart(2, '0')}</div>
+          <div class="news-card-date-weekday">${getWeekday(item.dateStr)}</div>
         </div>
-        <h3 class="news-card-title">${highlightText(item['标题'])}</h3>
-        <p class="news-card-summary">${highlightText(item['简介'])}</p>
-        <div class="news-card-meta">
-          <button class="news-card-toggle" onclick="toggleCard(this)">
-            <span class="toggle-label">展开阅读</span>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
-          </button>
-          ${source}
+        <div class="news-card-body">
+          <div class="news-card-tags">
+            ${topics.map(topic => {
+              const topicColor = getTopicColor(topic);
+              return `<button type="button" class="news-card-topic ${selectedTopics.has(topic) ? 'active' : ''}" data-card-topic="${escapeHtml(topic)}" style="background:${topicColor}1A; color:${topicColor}" aria-label="筛选主题 ${escapeHtml(topic)}"><span class="dot" style="background:${topicColor}"></span>${escapeHtml(topic)}</button>`;
+            }).join('')}
+          </div>
+          <h3 class="news-card-title">${highlightText(item['标题'], 'title')}</h3>
+          <p class="news-card-summary">${highlightText(item['简介'], 'summary')}</p>
+          <div class="news-card-meta">
+            <button class="news-card-toggle" onclick="toggleCard(this)">
+              <span class="toggle-label">展开阅读</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+            </button>
+            ${source}
+          </div>
         </div>
       </article>
     `;
   }).join('');
+
+  list.querySelectorAll('[data-card-topic]').forEach(button => {
+    button.addEventListener('click', () => applyCardTopic(button.dataset.cardTopic));
+  });
 
   renderPagination(data.length);
   updateContentHeader();
@@ -1171,9 +1302,9 @@ function renderPagination(totalCount) {
   });
 }
 
-function highlightText(text) {
+function highlightText(text, field) {
   let result = escapeHtml(text);
-  if (searchKeywords.length === 0) return result;
+  if (searchKeywords.length === 0 || (searchScope !== 'all' && searchScope !== field)) return result;
   searchKeywords.forEach(kw => {
     const escaped = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     result = result.replace(new RegExp(escaped, 'gi'), m => `<span class="highlight">${m}</span>`);
@@ -1203,21 +1334,22 @@ function updateContentHeader() {
     currentDateEl.textContent = '搜索结果';
     currentWeekdayEl.textContent = '';
     currentDayCount.textContent = filteredCount;
-    filterHint.textContent = currentDate || currentTopic !== 'all' ? '· 已叠加筛选' : '';
-    filterHint.classList.toggle('hidden', !currentDate && currentTopic === 'all');
+    filterHint.textContent = currentDate || selectedTopics.size > 0 ? '· 已叠加筛选' : '';
+    filterHint.classList.toggle('hidden', !currentDate && selectedTopics.size === 0);
   } else if (currentDate === null) {
-    viewLabel.textContent = currentTopic === 'all' ? '全部资讯' : '主题筛选';
+    viewLabel.textContent = selectedTopics.size === 0 ? '全部资讯' : '主题筛选';
     currentDateEl.textContent = '全部资讯';
     currentWeekdayEl.textContent = '';
     currentDayCount.textContent = filteredCount;
-    filterHint.textContent = currentTopic === 'all' ? '' : '· 已筛选主题';
-    filterHint.classList.toggle('hidden', currentTopic === 'all');
+    filterHint.textContent = selectedTopics.size === 0 ? '' : '· 已筛选主题';
+    filterHint.classList.toggle('hidden', selectedTopics.size === 0);
   } else {
     viewLabel.textContent = '当前查看';
     currentDateEl.textContent = formatFullDate(currentDate);
     currentWeekdayEl.textContent = getWeekday(currentDate);
     currentDayCount.textContent = filteredCount;
-    filterHint.classList.toggle('hidden', currentTopic === 'all');
+    filterHint.textContent = selectedTopics.size === 0 ? '' : '· 已筛选主题';
+    filterHint.classList.toggle('hidden', selectedTopics.size === 0);
   }
 }
 
@@ -1229,7 +1361,7 @@ function renderSearchTokens() {
     return;
   }
   container.innerHTML = `
-    <span class="search-tokens-label">同时包含</span>
+    <span class="search-tokens-label">${SEARCH_SCOPE_LABELS[searchScope]}中同时包含</span>
     ${searchKeywords.map((keyword, index) => `
       <button type="button" class="search-chip" data-keyword-index="${index}" aria-label="移除关键词 ${escapeHtml(keyword)}">
         ${escapeHtml(keyword)}<span class="search-chip-x" aria-hidden="true">×</span>
@@ -1252,6 +1384,15 @@ function renderSearchTokens() {
 function syncSearchInput() {
   document.getElementById('searchInput').value = searchKeywords.join(' ');
   document.getElementById('clearSearch').classList.toggle('hidden', searchKeywords.length === 0);
+}
+
+function updateSearchScope() {
+  document.querySelectorAll('[data-search-scope]').forEach(button => {
+    const isActive = button.dataset.searchScope === searchScope;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-checked', String(isActive));
+  });
+  document.getElementById('searchInput').placeholder = `搜索${SEARCH_SCOPE_LABELS[searchScope]}（空格分隔多个词）`;
 }
 
 function clearSearch() {
@@ -1299,14 +1440,38 @@ heroSection.addEventListener('mousemove', (e) => {
 document.getElementById('searchInput').addEventListener('input', (e) => {
   const value = e.target.value.trim();
   searchKeywords = value ? value.split(/[\s,，、]+/).filter(k => k.length > 0) : [];
+  document.getElementById('clearSearch').classList.toggle('hidden', searchKeywords.length === 0);
   currentPage = 1;
   refreshView();
 });
 document.getElementById('clearSearch').addEventListener('click', () => {
   clearSearch();
 });
+const searchSettingsTrigger = document.getElementById('searchSettingsTrigger');
+const searchScopeMenu = document.getElementById('searchScope');
+function setSearchSettingsOpen(isOpen) {
+  searchSettingsTrigger.setAttribute('aria-expanded', String(isOpen));
+  searchScopeMenu.classList.toggle('open', isOpen);
+}
+searchSettingsTrigger.addEventListener('click', () => {
+  setSearchSettingsOpen(searchSettingsTrigger.getAttribute('aria-expanded') !== 'true');
+});
+document.querySelectorAll('[data-search-scope]').forEach(button => {
+  button.addEventListener('click', () => {
+    searchScope = button.dataset.searchScope;
+    currentPage = 1;
+    updateSearchScope();
+    refreshView();
+    setSearchSettingsOpen(false);
+  });
+});
+
+document.addEventListener('click', (event) => {
+  if (!event.target.closest('.search-settings')) setSearchSettingsOpen(false);
+});
 
 document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') setSearchSettingsOpen(false);
   if (document.activeElement.tagName === 'INPUT') return;
   if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
     const idx = uniqueDates.indexOf(currentDate);
@@ -1329,6 +1494,7 @@ async function init() {
   renderTopicFilter();
   renderNewsList();
   renderSearchTokens();
+  updateSearchScope();
   updateStats();
 }
 init();

@@ -4,6 +4,10 @@ import { dirname, resolve } from 'node:path';
 const FEISHU_BASE_URL = process.env.FEISHU_BASE_URL || 'https://open.feishu.cn';
 const TIME_ZONE = process.env.FEISHU_TIME_ZONE || 'Asia/Shanghai';
 const OUTPUT_FILE = resolve(process.cwd(), 'public', 'data.json');
+const TOPIC_POOL = [
+  '融资动态', '开源成果', '具身模型', '产品发布', '前沿技术', '政策发布',
+  '具身数据', '产业数据', '展会赛事', '产业落地', '国内企业', '海外动态'
+];
 
 const required = [
   'FEISHU_APP_ID',
@@ -38,6 +42,18 @@ function toText(value) {
     }
   }
   return '';
+}
+
+function toTopicText(value) {
+  const raw = Array.isArray(value)
+    ? value.map(toText).filter(Boolean).join(';')
+    : toText(value);
+  return raw
+    .split(/[;；]/)
+    .map(topic => topic.trim())
+    .filter(Boolean)
+    .filter((topic, index, topics) => topics.indexOf(topic) === index)
+    .join(';');
 }
 
 function toUrl(value) {
@@ -123,7 +139,7 @@ function transformRecord(record) {
   const fields = record.fields || {};
   const date = toDate(getField(fields, '整理日期'));
   const title = toText(getField(fields, '标题'));
-  const topic = toText(getField(fields, '主题'));
+  const topic = toTopicText(getField(fields, '主题'));
   const summary = toText(getField(fields, '简介'));
   const link = toUrl(getField(fields, '链接（URL）')) || toUrl(getField(fields, '链接'));
 
@@ -144,6 +160,13 @@ async function main() {
     .map(transformRecord)
     .filter(Boolean)
     .sort((a, b) => b['整理日期'].localeCompare(a['整理日期']) || a['标题'].localeCompare(b['标题'], 'zh-CN'));
+
+  const invalidTopics = [...new Set(
+    reports.flatMap(report => report['主题'].split(';').filter(topic => topic && !TOPIC_POOL.includes(topic)))
+  )];
+  if (invalidTopics.length > 0) {
+    console.warn(`发现不在主题池中的标签：${invalidTopics.join('、')}。已保留原始数据，请在飞书中修正。`);
+  }
 
   await mkdir(dirname(OUTPUT_FILE), { recursive: true });
   await writeFile(OUTPUT_FILE, `${JSON.stringify(reports, null, 2)}\n`, 'utf8');
