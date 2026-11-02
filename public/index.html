@@ -113,14 +113,23 @@ body {
 
 /* ============ Hero ============ */
 .hero {
-  background: linear-gradient(135deg, #2D0F4E 0%, #4A1D7A 45%, #5B2A8F 100%);
-  position: relative; overflow: hidden; color: white;
+  background: #f8f7fd;
+  position: relative; isolation: isolate; overflow: hidden; color: var(--text-1);
 }
+.hero::before {
+  content: ''; position: absolute; z-index: -2; inset: -20%; pointer-events: none;
+  background: radial-gradient(ellipse 35% 70% at 22% 30%, rgba(255,255,255,.98), transparent 100%), radial-gradient(ellipse 38% 85% at 53% 50%, rgba(160,135,210,.8), transparent 100%), radial-gradient(ellipse 34% 75% at 84% 45%, rgba(255,255,255,.98), transparent 100%), #e8e1f5;
+  animation: heroClouds 12s ease-in-out infinite alternate;
+  will-change: transform;
+}
+@keyframes heroClouds { from { transform: translate3d(-13%, -5%, 0) scale(1.08); } to { transform: translate3d(13%, 5%, 0) scale(1.08); } }
+.hero::after { content: ''; position: absolute; z-index: -1; inset: -20%; pointer-events: none; background: radial-gradient(ellipse 30% 75% at 34% 65%, rgba(170,145,218,.34), transparent 100%), radial-gradient(ellipse 28% 80% at 67% 30%, rgba(255,255,255,.68), transparent 100%); filter: blur(18px); animation: heroCloudVeil 17s ease-in-out infinite alternate-reverse; will-change: transform; }
+@keyframes heroCloudVeil { from { transform: translate3d(-12%, 4%, 0); } to { transform: translate3d(12%, -4%, 0); } }
 .hero-grid {
   position: absolute; inset: 0;
   background-image: 
-    linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
+    linear-gradient(rgba(74,29,122,0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,29,122,0.035) 1px, transparent 1px);
   background-size: 60px 60px;
   mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
   -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black 0%, transparent 100%);
@@ -128,8 +137,8 @@ body {
 .hero-grid-highlight {
   position: absolute; inset: 0; pointer-events: none;
   background-image: 
-    linear-gradient(rgba(245,197,24,0.15) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(245,197,24,0.15) 1px, transparent 1px);
+    linear-gradient(rgba(107,43,168,0.13) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(107,43,168,0.13) 1px, transparent 1px);
   background-size: 60px 60px;
   -webkit-mask-image: radial-gradient(circle 100px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
   mask-image: radial-gradient(circle 100px at var(--mouse-x) var(--mouse-y), black 0%, transparent 100%);
@@ -138,7 +147,7 @@ body {
 .hero:hover .hero-grid-highlight { opacity: 1; }
 .hero-glow-mouse {
   position: absolute; width: 500px; height: 500px; pointer-events: none;
-  background: radial-gradient(circle, rgba(245,197,24,0.18), transparent 60%);
+  background: radial-gradient(circle, rgba(255,255,255,0.7), rgba(177,153,220,0.16) 40%, transparent 70%);
   left: var(--mouse-x); top: var(--mouse-y);
   transform: translate(-50%, -50%);
   filter: blur(40px);
@@ -146,8 +155,8 @@ body {
 }
 .hero:hover .hero-glow-mouse { opacity: 1; }
 .hero-glow { position: absolute; border-radius: 50%; pointer-events: none; filter: blur(80px); }
-.hero-glow-1 { width: 500px; height: 500px; top: -200px; right: -100px; background: radial-gradient(circle, rgba(245,197,24,0.25), transparent 60%); }
-.hero-glow-2 { width: 600px; height: 600px; bottom: -300px; left: -150px; background: radial-gradient(circle, rgba(155,107,201,0.4), transparent 60%); }
+.hero-glow-1 { width: 500px; height: 500px; top: -200px; right: -100px; background: radial-gradient(circle, rgba(255,255,255,0.8), transparent 60%); }
+.hero-glow-2 { width: 600px; height: 600px; bottom: -300px; left: -150px; background: radial-gradient(circle, rgba(155,107,201,0.18), transparent 60%); }
 .hero-orbit { position: absolute; top: 50%; right: 6%; transform: translateY(-50%); width: 360px; height: 360px; pointer-events: none; opacity: 0.7; }
 .hero-orbit::before, .hero-orbit::after {
   content: ''; position: absolute; inset: 0;
@@ -168,19 +177,24 @@ body {
 @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 @keyframes float { 0%, 100% { transform: translate(-50%, -50%); } 50% { transform: translate(-50%, calc(-50% - 12px)); } }
 .hero-stat-card {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.56);
   backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(107, 43, 168, 0.14);
   border-radius: 16px; padding: 16px 20px; min-width: 140px;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .hero-stat-card:hover {
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.8);
   transform: translateY(-6px);
   box-shadow: 0 12px 40px rgba(245,197,24,0.15);
   border-color: rgba(245,197,24,0.3);
 }
 .pulse-dot { width: 8px; height: 8px; background: #FFD93D; border-radius: 50%; position: relative; display: inline-block; }
+.hero-title { position: relative; isolation: isolate; width: fit-content; }
+.hero-title::before { content: ''; position: absolute; z-index: 1; width: 90px; height: 90px; border-radius: 50%; left: var(--title-x, 50%); top: var(--title-y, 50%); transform: translate(-50%, -50%); background: #19140d; opacity: 0; pointer-events: none; transition: opacity .2s; }
+.hero-title-reveal { position: absolute; z-index: 2; inset: 0; color: #fff0b7; pointer-events: none; opacity: 0; clip-path: circle(45px at var(--title-x, 50%) var(--title-y, 50%)); transition: opacity .2s; }
+@media (hover: hover) and (pointer: fine) { .hero-title:hover::before, .hero-title:hover .hero-title-reveal { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .hero::before, .hero::after { animation: none; } .hero-grid-highlight, .hero-glow-mouse { display: none; } }
 .pulse-dot::after { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: #FFD93D; opacity: 0.4; animation: pulse 2s infinite; }
 @keyframes pulse { 0% { transform: scale(0.8); opacity: 0.5; } 100% { transform: scale(2); opacity: 0; } }
 
@@ -551,41 +565,34 @@ body {
   <div class="hero-grid"></div>
   <div class="hero-grid-highlight"></div>
   <div class="hero-glow-mouse"></div>
-  <div class="hero-glow hero-glow-1"></div>
-  <div class="hero-glow hero-glow-2"></div>
-  <div class="hero-orbit hidden lg:block">
-    <div class="orbit-core"></div>
-    <div class="orbit-dot-1"></div>
-    <div class="orbit-dot-2"></div>
-    <div class="orbit-dot-3"></div>
-  </div>
   
   <div class="max-w-[1480px] mx-auto px-6 relative">
     <div class="flex items-end justify-between flex-wrap gap-8">
       <div class="max-w-2xl">
-        <div class="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/30 rounded-full px-3 py-1 mb-5">
+        <div class="inline-flex items-center gap-2 bg-white/60 border border-purple-900/15 rounded-full px-3 py-1 mb-5">
           <span class="pulse-dot"></span>
-          <span class="text-yellow-200 text-[11px] font-medium tracking-[0.15em] uppercase font-display">Daily Brief · 每日更新</span>
+          <span class="text-purple-900 text-[11px] font-medium tracking-[0.15em] uppercase font-display">Daily Brief · 每日更新</span>
         </div>
-        <h1 class="text-4xl md:text-5xl font-black leading-[1.15] mb-4 font-display tracking-tight">
+        <h1 class="hero-title text-4xl md:text-5xl font-black leading-[1.15] mb-4 font-display tracking-tight">
           追踪具身智能前沿
-          <span class="block bg-gradient-to-r from-yellow-200 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">每日精选产业洞察</span>
+          <span class="block text-[var(--primary-2)]">每日精选产业洞察</span>
+          <span class="hero-title-reveal" aria-hidden="true">追踪具身智能前沿<span class="block">每日精选产业洞察</span></span>
         </h1>
-        <p class="text-purple-100/80 text-base md:text-lg leading-relaxed max-w-xl">
+        <p class="text-[var(--text-2)] text-base md:text-lg leading-relaxed max-w-xl">
           汇聚全球具身智能产业最新研究、产品、融资与企业动态，由产业研究团队筛选整理，每日发布。
         </p>
       </div>
       
       <div class="flex gap-3">
         <div class="hero-stat-card">
-          <div class="text-purple-200/70 text-[10px] tracking-wider uppercase mb-1">今日精选</div>
-          <div class="text-yellow-300 text-3xl font-bold font-display counter" id="todayCount">0</div>
-          <div class="text-purple-100/60 text-xs mt-1">条资讯</div>
+          <div class="text-[var(--text-2)] text-[10px] tracking-wider uppercase mb-1">今日精选</div>
+          <div class="text-[var(--primary)] text-3xl font-bold font-display counter" id="todayCount">0</div>
+          <div class="text-[var(--text-2)] text-xs mt-1">条资讯</div>
         </div>
         <div class="hero-stat-card">
-          <div class="text-purple-200/70 text-[10px] tracking-wider uppercase mb-1">最新日期</div>
-          <div class="text-yellow-300 text-3xl font-bold font-display" id="todayDate">--</div>
-          <div class="text-purple-100/60 text-xs mt-1" id="todayWeekday">--</div>
+          <div class="text-[var(--text-2)] text-[10px] tracking-wider uppercase mb-1">最新日期</div>
+          <div class="text-[var(--primary)] text-3xl font-bold font-display" id="todayDate">--</div>
+          <div class="text-[var(--text-2)] text-xs mt-1" id="todayWeekday">--</div>
         </div>
       </div>
     </div>
@@ -593,7 +600,7 @@ body {
 </section>
 
 <!-- Main -->
-<main class="max-w-[1280px] mx-auto px-6 py-10 relative">
+<main class="max-w-[1480px] mx-auto px-6 py-10 relative">
   <div class="grid grid-cols-12 gap-6">
     <!-- Sidebar -->
     <aside class="col-span-12 lg:col-span-3">
@@ -1435,6 +1442,12 @@ heroSection.addEventListener('mousemove', (e) => {
   const y = e.clientY - rect.top;
   heroSection.style.setProperty('--mouse-x', x + 'px');
   heroSection.style.setProperty('--mouse-y', y + 'px');
+});
+const heroTitle = heroSection.querySelector('.hero-title');
+heroTitle.addEventListener('mousemove', (e) => {
+  const rect = heroTitle.getBoundingClientRect();
+  heroTitle.style.setProperty('--title-x', (e.clientX - rect.left) + 'px');
+  heroTitle.style.setProperty('--title-y', (e.clientY - rect.top) + 'px');
 });
 
 document.getElementById('searchInput').addEventListener('input', (e) => {
